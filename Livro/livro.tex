@@ -1,0 +1,36 @@
+\documentclass[12pt]{book}
+
+% Codificação de entrada e saída
+\usepackage[T1]{fontenc}
+
+\usepackage{config}
+
+% Informações do livro
+\newcommand{\authorname}{Andr\^es Oliveira}
+\newcommand{\booktitle}{\LaTeX\ para gente grande}
+\newcommand{\subtitle}{Um guia avan\c{c}ado}
+\newcommand{\editionyear}{2024}
+\title{\booktitle}
+\author{\authorname}
+
+\usepackage{lipsum}
+
+\begin{document}
+
+\frontmatter
+\input{capa}
+\input{direitos-autorais}
+\input{sumario}
+
+\mainmatter
+\pagestyle{fancy}
+
+\input{capitulo1}
+\input{capitulo2}
+
+\backmatter
+\input{bibliografia}
+\input{backcover}
+ 
+
+\end{document}
