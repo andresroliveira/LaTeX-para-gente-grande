@@ -1,66 +1,66 @@
 \pagestyle{empty}
 
 \begin{center}
-    \begin{tikzpicture}[remember picture,overlay]
-        \fill[black] (current page.south west) rectangle (current page.north east);
+	\begin{tikzpicture}[remember picture,overlay]
+		\fill[black] (current page.south west) rectangle (current page.north east);
 
-        % Autor
-        \node[white, font=\Huge, anchor=north, text width =\linewidth, align = center] (author) at ([yshift=-44pt] current page.north) {\textcolor{customgold}{\scshape\large\authorname}};
+		% Autor
+		\node[white, font=\Huge, anchor=north, text width =\linewidth, align = center] (author) at ([yshift=-44pt] current page.north) {\textcolor{customgold}{\scshape\large\authorname}};
 
-        % Título
-        \node[white, font=\Large, anchor=north, text width =0.9\linewidth, align = center, below=4pt of author.south] (title) {\scshape\Huge\booktitle};
+		% Título
+		\node[white, font=\Large, anchor=north, text width =0.9\linewidth, align = center, below=4pt of author.south] (title) {\scshape\Huge\booktitle};
 
-        % Padrão de círculos central
-        \begin{scope}[shift={(current page.center)}, scale=0.75]
-            \foreach \i in {0, 45, ..., 315} {
-                \fill[customgold] (\i:5) circle (0.5);
-            }
+		% Padrão de círculos central
+		\begin{scope}[shift={(current page.center)}, scale=0.75]
+			\foreach \i in {0, 45, ..., 315} {
+					\fill[customgold] (\i:5) circle (0.5);
+				}
 
-            \foreach \i in {5, 4, 3, 2, 1} {
-                \fill[customgold] (0,0) circle (\i);
-                \fill[white] (0,0) circle (\i-0.25);
-                \fill[black] (0,0) circle (\i-0.5);
-            }
-        \end{scope}
-
-
-
-        \node[white, font=\Huge, anchor=south] (publisher) at ([yshift=32pt] current page.south) {\textcolor{gray}{\scshape\large LEM}};
+			\foreach \i in {5, 4, 3, 2, 1} {
+					\fill[customgold] (0,0) circle (\i);
+					\fill[white] (0,0) circle (\i-0.25);
+					\fill[black] (0,0) circle (\i-0.5);
+				}
+		\end{scope}
 
 
-        % Logotipo da editora
-        \node[anchor=north, above=4pt of publisher.north] {\includegraphics[width=0.15\textwidth]{figs/LEM.eps}};
 
-    \end{tikzpicture}
+		\node[white, font=\Huge, anchor=south] (publisher) at ([yshift=32pt] current page.south) {\textcolor{gray}{\scshape\large LEM}};
+
+
+		% Logotipo da editora
+		\node[anchor=north, above=4pt of publisher.north] {\includegraphics[width=0.15\textwidth]{figs/LEM.eps}};
+
+	\end{tikzpicture}
 \end{center}
 
 \cleardoublepage
 
 \begin{titlepage}
-    \centering
+	\centering
 
-    \thispagestyle{empty}
+	\thispagestyle{empty}
 
-    \vspace*{0.5cm}
+	\vspace*{0.5cm}
 
-    {\scshape\Large \authorname \par}
+	{\scshape\Large \authorname \par}
 
-    \vfill
+	\vfill
 
-    \vspace{1.5cm}
+	\vspace{1.5cm}
 
-    {\scshape\huge \booktitle \par}
+	{\scshape\huge \booktitle \par}
 
-    {\vspace{6pt}
-        {\scshape\large \subtitle\par}
+	{\vspace{6pt}
+		{\scshape\large \subtitle\par}
 
-    \vspace{\stretch{1.25}}}
+		\vspace{\stretch{1.25}}}
 
-    \vspace{1.5cm}
+	\vspace{1.5cm}
 
-    \vfill
+	\vfill
 
-    {\scshape\large \editionyear \par}
+	{\scshape\large \editionyear \par}
 
 \end{titlepage}
 

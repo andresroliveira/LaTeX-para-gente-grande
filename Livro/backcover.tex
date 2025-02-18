@@ -3,25 +3,25 @@
 \cleardoublepage
 
 \begin{center}
-    \begin{tikzpicture}[remember picture,overlay]
-        \fill[black] (current page.south west) rectangle (current page.north east);  
+	\begin{tikzpicture}[remember picture,overlay]
+		\fill[black] (current page.south west) rectangle (current page.north east);
 
-        \begin{scope}[shift={(current page.center)}, scale=0.75]
-            \foreach \i in {0, 45, ..., 315} {
-                \fill[lightgray] (\i:5) circle (0.5);
-            }
+		\begin{scope}[shift={(current page.center)}, scale=0.75]
+			\foreach \i in {0, 45, ..., 315} {
+					\fill[lightgray] (\i:5) circle (0.5);
+				}
 
-            \foreach \i in {5, 4, 3, 2, 1} {
-                \fill[lightgray] (0,0) circle (\i);
-                \fill[white] (0,0) circle (\i-0.25);
-                \fill[black] (0,0) circle (\i-0.5);
-            }
-        \end{scope}
+			\foreach \i in {5, 4, 3, 2, 1} {
+					\fill[lightgray] (0,0) circle (\i);
+					\fill[white] (0,0) circle (\i-0.25);
+					\fill[black] (0,0) circle (\i-0.5);
+				}
+		\end{scope}
 
-        \node[white, anchor=north, text width =0.9\linewidth, align = center] at ([yshift=-48pt] current page.north) {\scshape{\booktitle}};
+		\node[white, anchor=north, text width =0.9\linewidth, align = center] at ([yshift=-48pt] current page.north) {\scshape{\booktitle}};
 
 
-    \node[anchor=north, above=4pt of publisher.north] {\includegraphics[width=0.15\textwidth]{figs/LEM.eps}};
+		\node[anchor=north, above=4pt of publisher.north] {\includegraphics[width=0.15\textwidth]{figs/LEM.eps}};
 
-    \end{tikzpicture}
+	\end{tikzpicture}
 \end{center}

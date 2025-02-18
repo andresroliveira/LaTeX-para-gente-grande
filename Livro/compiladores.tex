@@ -13,33 +13,44 @@ Um compilador é um programa que traduz um código de uma linguagem de programa�
 Existem várias distribuições de \LaTeX, que são pacotes que contêm o compilador de \LaTeX e outros programas necessários para compilar documentos em \LaTeX. Alguns exemplos de distribuições de \LaTeX são:
 
 \begin{itemize}
-    \item \textbf{TeX Live}: Uma distribuição de \LaTeX multiplataforma.\footnote{Disponível em \url{https://www.tug.org/texlive/}}
-    \item \textbf{MiKTeX}: Uma distribuição de \LaTeX para Windows.\footnote{Disponível em \url{https://miktex.org/}}
-    \item \textbf{MacTeX}: Uma distribuição de \LaTeX para macOS.\footnote{Disponível em \url{https://www.tug.org/mactex/}}
+	\item \textbf{TeX Live}: Uma distribuição de \LaTeX multiplataforma.\footnote{Disponível em \url{https://www.tug.org/texlive/}}
+	\item \textbf{MiKTeX}: Uma distribuição de \LaTeX para Windows.\footnote{Disponível em \url{https://miktex.org/}}
+	\item \textbf{MacTeX}: Uma distribuição de \LaTeX para macOS.\footnote{Disponível em \url{https://www.tug.org/mactex/}}
 \end{itemize}
 
 \subsection{Compiladores de \LaTeX}
 
-Existem vários compiladores de \LaTeX, que são programas que traduzem o código \LaTeX para um documento, como por exemplo um arquivo PDF. Alguns exemplos de compiladores de \LaTeX são:
+Existem vários compiladores de \LaTeX, que são programas que traduzem o código \LaTeX\ para um documento, como por exemplo um arquivo PDF. Alguns exemplos de compiladores de \LaTeX são:
 
 \begin{itemize}
-    \item \textbf{pdflatex}: Compila o código \LaTeX para um arquivo PDF.
-    \item \textbf{xelatex}: Compila o código \LaTeX para um arquivo PDF, mas com suporte a fontes do sistema.
-    \item \textbf{lualatex}: Compila o código \LaTeX para um arquivo PDF, mas com suporte a linguagem Lua.
+	\item \textbf{latex}: Compila o código \LaTeX para um arquivo DVI.
+	\item \textbf{pdflatex}: Compila o código \LaTeX para um arquivo PDF.
+	\item \textbf{xelatex}: Compila o código \LaTeX para um arquivo PDF, mas com suporte a fontes do sistema.
+	\item \textbf{lualatex}: Compila o código \LaTeX para um arquivo PDF, mas com suporte a linguagem Lua.
 \end{itemize}
 
 Para compilar um documento em \LaTeX, basta executar um desses compiladores no arquivo \texttt{.tex}.
 
 Conside o seguinte arquivo \texttt{oi\_mundo.tex}, no código \ref{cod:oi_mundo}.
 
-\begin{lstlisting}[language={[latex]TeX}, caption=exemplo.tex, label=cod:oi_mundo]
+\begin{lstlisting}[language={[latex]TeX}, caption={oi\_mundo.tex}, label=cod:oi_mundo]
 \documentclass{article}
 \begin{document}
 Oi, mundo!
 \end{document}
 \end{lstlisting}
 
-Para compilar esse programa, basta executar o comando \texttt{pdflatex oi\_mundo.tex}.
+
+Ao executar o comando \texttt{pdflatex oi\_mundo.tex}, o arquivo \texttt{oi\_mundo.pdf} será gerado. O conteúdo do arquivo \texttt{oi\_mundo.pdf} será:
+
+
+
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=0.5\textwidth]{imagens/oi_mundo.png}
+% 	\caption{oi\_mundo.pdf}
+% \end{figure}
+
 
 
 Outra forma de compilar um documento em \LaTeX é utilizando \texttt{latexmk}. O Latexmk automatiza completamente o processo de compilação de um documento LaTeX. Essencialmente, ele funciona como um parente especializado da ferramenta geral make, mas com a vantagem de determinar as dependências automaticamente e possuir outras funcionalidades muito úteis. No modo básico de operação, o Latexmk recebe o nome do arquivo principal de origem de um documento e executa a sequência apropriada de comandos para gerar uma versão em .dvi, .ps, .pdf e/ou uma cópia impressa do documento.
