@@ -1,43 +1,75 @@
 \chapter{Introdução}
 
-\lettrine{E}{ste} livro é um guia para o minicurso ``\booktitle'' que será ministrado para o LEM - Laboratório de Ensino de Matemática do IMECC - Instituto de Matemática, Estatística e Computação Científica da UNICAMP - Universidade Estadual de Campinas. LaTeX para gente grande pressupõe que tenham conhecimento básico de LaTeX e que deseja aprimorar seus conhecimentos.
+%\lettrine{E}{ste} livro é um guia para o minicurso ``\booktitle'' que será ministrado para o LEM - Laboratório de Ensino de Matemática do IMECC - Instituto de Matemática, Estatística e Computação Científica da UNICAMP - Universidade Estadual de Campinas. LaTeX para gente grande pressupõe que tenham conhecimento básico de LaTeX e que deseja aprimorar seus conhecimentos.
+
+\lettrine{E}{ste} livro é um guia para o minicurso ``\booktitle'', que será ministrado no LEM - Laboratório de Ensino de Matemática do IMECC - Instituto de Matemática, Estatística e Computação Científica da UNICAMP - Universidade Estadual de Campinas.
+
+Este minicurso tem como objetivo apresentar técnicas não tão básicas de \LaTeX\ para aqueles que já possuem conhecimento básico da ferramenta e desejam aprimorar suas habilidades.
+
+Nosso foco principal será em entender o funcionamento dos compiladores de \LaTeX, como lidar com diferentes fontes e estilos de formatação, e como criar apresentações profissionais utilizando o Beamer. Além disso, exploraremos o poder do TikZ para a criação de diagramas e ilustrações de alta qualidade.
 
 
 \section{O que é \LaTeX?}
 
-Qual a diferença entre \LaTeX\ e \TeX?
+%Qual a diferença entre \LaTeX\ e \TeX?
 
-O \TeX\ é um sistema de tipografia desenvolvido por Donald Knuth no final da década de 1970, projetado para produzir documentos com alta qualidade tipográfica, especialmente textos técnicos e matemáticos. Ele é uma linguagem de baixo nível que permite controle detalhado sobre o layout do documento. Apesar de ser muito poderoso, o \TeX\ pode ser complexo e trabalhoso para usuários iniciantes, uma vez que exige a definição manual de muitos aspectos do documento.
+\TeX\ é um sistema de tipografia criado por Donald Knuth em 1977, com o objetivo de produzir documentos de alta qualidade, especialmente aqueles que contêm matemática. Knuth desenvolveu o \TeX\ para resolver problemas de formatação que encontrou ao escrever seu livro ``The Art of Computer Programming''. O \TeX\ é conhecido por sua precisão e controle detalhado sobre a disposição do texto, permitindo que os usuários criem documentos com uma aparência profissional. Ele é amplamente utilizado em ambientes acadêmicos e científicos, onde a formatação de equações matemáticas complexas é essencial. O \TeX\ é um sistema baseado em comandos, onde o usuário escreve o conteúdo e os comandos de formatação em um arquivo de texto, que é então processado para gerar o documento final.
 
-Por outro lado, o \LaTeX, desenvolvido por Leslie Lamport nos anos 1980, é um conjunto de macros baseado no \TeX. Ele simplifica o processo de criação de documentos ao fornecer comandos de alto nível para estruturar e formatar textos, deixando os detalhes técnicos para o \TeX. O \LaTeX\ é amplamente utilizado em publicações científicas e acadêmicas devido à sua facilidade de uso e capacidade de produzir documentos consistentes e bem formatados.
+\LaTeX, por sua vez, é uma extensão do \TeX, desenvolvida por Leslie Lamport no início dos anos 1980. O \LaTeX\ simplifica o uso do \TeX\ ao fornecer um conjunto de macros e comandos de alto nível que automatizam muitas tarefas de formatação. Em vez de se preocupar com detalhes de layout, os usuários do \LaTeX\ podem se concentrar no conteúdo do documento, enquanto o sistema cuida da formatação. O \LaTeX\ é especialmente popular para a criação de artigos científicos, relatórios técnicos, livros e apresentações, graças à sua capacidade de lidar com referências cruzadas, bibliografias e estruturas complexas de documentos de forma eficiente.
+
+
+
+%O \TeX\ é um sistema de tipografia desenvolvido por Donald Knuth no final da década de 1970, projetado para produzir documentos com alta qualidade tipográfica, especialmente textos técnicos e matemáticos. Ele é uma linguagem de baixo nível que permite controle detalhado sobre o layout do documento. Apesar de ser muito poderoso, o \TeX\ pode ser complexo e trabalhoso para usuários iniciantes, uma vez que exige a definição manual de muitos aspectos do documento.
+%
+%Por outro lado, o \LaTeX, desenvolvido por Leslie Lamport nos anos 1980, é um conjunto de macros baseado no \TeX. Ele simplifica o processo de criação de documentos ao fornecer comandos de alto nível para estruturar e formatar textos, deixando os detalhes técnicos para o \TeX. O \LaTeX\ é amplamente utilizado em publicações científicas e acadêmicas devido à sua facilidade de uso e capacidade de produzir documentos consistentes e bem formatados.
 
 \section{Por que usar \LaTeX?}
 
-Existem várias vantagens em usar o \LaTeX\ para escrever documentos:
+No mundo da preparação de documentos, \LaTeX\ oferece uma abordagem distinta e vantajosa em comparação com editores \textit{WYSIWYG} tradicionais como o Microsoft Word ou LibreOffice Writer. A filosofia \textit{WYSIWYW} do \LaTeX\ permite que você se concentre no conteúdo e na estrutura do seu texto, em vez de se perder na formatação visual imediata.  Você descreve o que deseja que o documento final seja em termos de estrutura lógica (como seções, figuras, citações), e o \LaTeX\ cuida da apresentação visual com precisão e profissionalismo.  Isso significa que você não está limitado pelas restrições de estilos predefinidos de um editor \textit{WYSIWYG} e pode alcançar um nível de controle e refinamento estético muito superior, especialmente crucial para documentos complexos e de alta qualidade.
 
-\begin{itemize}
-	\item \textbf{Qualidade tipográfica:} O \LaTeX\ produz documentos com alta qualidade tipográfica, graças ao algoritmo de quebra de linha e ao sistema de fontes de alta qualidade.
-	\item \textbf{Facilidade de formatação:} O \LaTeX\ fornece comandos simples e intuitivos para formatar textos, tais como títulos, seções, listas, tabelas e figuras.
-	\item \textbf{Consistência:} O \LaTeX\ garante a consistência do layout do documento, evitando erros comuns de formatação.
-	\item \textbf{Reutilização:} O \LaTeX\ permite reutilizar trechos de texto e comandos em vários documentos, facilitando a manutenção e atualização de conteúdo.
-	\item \textbf{Controle detalhado:} O \LaTeX\ oferece controle detalhado sobre o layout do documento, permitindo ajustar o espaçamento, a formatação e o estilo de texto conforme necessário.
-	\item \textbf{Compatibilidade:} O \LaTeX\ é compatível com vários sistemas operacionais e editores de texto, facilitando a colaboração e o compartilhamento de documentos.
+Além disso, \LaTeX\ oferece uma série de outros benefícios significativos. Ele garante consistência e formatação uniforme em todo o documento, automatizando tarefas como numeração de páginas, seções, figuras e citações. A tipografia do \LaTeX\ é reconhecida pela sua excelência, especialmente em fórmulas matemáticas e documentos técnicos, produzindo resultados visualmente agradáveis e fáceis de ler. A vasta comunidade de usuários e a extensa coleção de pacotes \LaTeX\ oferecem soluções e personalizações para praticamente qualquer necessidade de formatação ou funcionalidade adicional.  Ademais, \LaTeX\ é multiplataforma e ideal para a produção de documentos em formatos portáveis como PDF, garantindo que seu trabalho seja visualizado corretamente em qualquer sistema operacional e dispositivo.
 
-\end{itemize}
+No entanto, o \LaTeX\ tem uma curva de aprendizado mais íngreme do que os editores de texto \textit{WYSIWYG}. A sintaxe de marcação pode parecer intimidante no início, mas com um pouco de prática, você pode se tornar proficiente em criar documentos \LaTeX\ impressionantes. Existem muitos recursos disponíveis ajudar a aprender e usar o \LaTeX\ de forma eficaz.
+
+%Diferente do paradigma \textit{WYSIWYG}, acrônimo para \textit{What You See Is What You Get} (aquilo que você vê é aquilo que você tem), como é o padrão de editores como Microsoft Word ou LibreOffice Writer, em \LaTeX\ e \TeX\ temos \textit{WYSIWYW}, \textit{what you see is what you want}.
+%
+%Existem várias vantagens em usar o \LaTeX\ para escrever documentos:
+%
+%\begin{itemize}
+%	\item \textbf{Qualidade tipográfica:} O \LaTeX\ produz documentos com alta qualidade tipográfica, graças ao algoritmo de quebra de linha e ao sistema de fontes de alta qualidade.
+%	\item \textbf{Facilidade de formatação:} O \LaTeX\ fornece comandos simples e intuitivos para formatar textos, tais como títulos, seções, listas, tabelas e figuras.
+%	\item \textbf{Consistência:} O \LaTeX\ garante a consistência do layout do documento, evitando erros comuns de formatação.
+%	\item \textbf{Reutilização:} O \LaTeX\ permite reutilizar trechos de texto e comandos em vários documentos, facilitando a manutenção e atualização de conteúdo.
+%	\item \textbf{Controle detalhado:} O \LaTeX\ oferece controle detalhado sobre o layout do documento, permitindo ajustar o espaçamento, a formatação e o estilo de texto conforme necessário.
+%	\item \textbf{Compatibilidade:} O \LaTeX\ é compatível com vários sistemas operacionais e editores de texto, facilitando a colaboração e o compartilhamento de documentos.
+%
+%\end{itemize}
 
 \section{A estrutura de um documento \LaTeX}
 
-Um documento \LaTeX\ é composto duas principais partes:
+Um documento \LaTeX\ é fundamentalmente estruturado em duas partes distintas: o \textbf{preâmbulo} e o \textbf{corpo do texto}.  Pense no preâmbulo como a seção de configurações iniciais e preparativos do seu documento. É onde você define o tipo de documento que está criando (artigo, livro, relatório, etc.), carrega pacotes adicionais para funcionalidades específicas, define informações como título, autor e data, e realiza outras configurações globais que afetam todo o documento. O corpo do texto, por sua vez, é onde reside o conteúdo principal do seu documento – o texto que você deseja apresentar, juntamente com a estruturação lógica desse conteúdo, como seções, parágrafos, listas, figuras, tabelas e fórmulas matemáticas.
 
-\begin{itemize}
-	\item \textbf{Preambulo:} A parte inicial do documento que contém informações sobre o tipo de documento, pacotes utilizados, configurações de formatação e comandos personalizados.
-	\item \textbf{Corpo:} A parte principal do documento que contém o texto, títulos, seções, listas, tabelas, figuras e outros elementos.
-\end{itemize}
+O \textbf{preâmbulo} de um documento \LaTeX\ está localizado no início do arquivo, antes do comando \verb|\begin{document}|. É nesta seção que você utiliza comandos essenciais como \verb|\documentclass{}| para definir o tipo de documento base, e \verb|\usepackage{}| para incluir pacotes que adicionam funcionalidades extras, como suporte a diferentes idiomas, tipografia avançada ou inclusão de gráficos. Além disso, o preâmbulo é o local para definir metadados do documento, como o título (\verb|\title{}|), autor (\verb|\author{}|), e data (\verb|\date{}|). Você também pode personalizar o preâmbulo com comandos para definir configurações de página, estilos de título, ou criar seus próprios comandos personalizados para facilitar a escrita e manter a consistência do documento.
+
+O \textbf{corpo do texto} em \LaTeX\ é delimitado pelos comandos \verb|\begin{document}| e \verb|\end{document}|. Dentro deste ambiente, você escreve o conteúdo principal do seu documento, utilizando comandos \LaTeX\ para estruturar e formatar o texto.  É aqui que você cria seções (\verb|\section{}|), subseções (\verb|\subsection{}|), parágrafos, listas (\verb|\begin{itemize}| ou \verb|\begin{enumerate}|), insere figuras (\verb|\includegraphics{}|) e tabelas (\verb|\begin{tabular}{}|). A beleza do \LaTeX\ reside na separação entre conteúdo e forma: no corpo do texto, você se concentra em descrever a estrutura lógica do seu documento, utilizando os comandos apropriados, e o \LaTeX\ cuida da formatação visual, garantindo que o resultado final seja profissional e consistente, de acordo com as configurações definidas no preâmbulo e os pacotes utilizados.
+
 
 
 \section{Como usar este livro}
 
-Esse livro usa o template \'e baseado no \cite{carauma}.
+Esse livro é para ser de acompanhamento para o minicurso do LEM, mas pode ser usado para consulta igualmente.
+
+O \textit{template} para do livro é baseado em \cite{carauma}. Recomendo.
+
+\section{Distribuições}
+
+Uma distribuição \LaTeX\ é um conjunto completo de ferramentas essenciais para transformar seus arquivos de texto \LaTeX\ em documentos formatados, como PDFs. Pense nela como um kit de ferramentas completo que inclui o compilador \TeX/\LaTeX\ em si, uma vasta coleção de pacotes (\textit{packages}) que estendem a funcionalidade básica do \LaTeX\ para lidar com tarefas específicas (como inserir gráficos, criar tabelas complexas, ou formatar bibliografias), fontes tipográficas e outros utilitários.  Existem diversas distribuições \LaTeX\ disponíveis, cada uma com suas particularidades, mas todas compartilham o objetivo de fornecer um ambiente completo para a criação de documentos \LaTeX.
+
+Para acompanhar este livro, recomendamos a utilização do \TeX Live. O \TeX Live é uma distribuição multiplataforma, abrangente e amplamente utilizada, o que garante que você encontrará vasta documentação e suporte online caso necessite.  Embora este livro seja escrito considerando o \TeX Live, é importante saber que o conteúdo é aplicável independentemente da distribuição \LaTeX\ que você escolher. A escolha de usar \TeX Live é primariamente para simplificar o processo de instalação e garantir uma experiência consistente para todos os leitores, mas você é livre para utilizar qualquer outra distribuição de sua preferência.
+
+Você pode encontra o \TeX\ Live em \url{https://tug.org/texlive/}.
+
+%Para obter um compilador de \TeX\ ou \LaTeX\ em seu computador, é necessário uma distribuição rodando na sua máquina. Para esse minicurso utilizaremos \textit{\TeX Live}, uma distribuição multiplataforma que pode ser encontrada em \url{https://tug.org/texlive/}
 
 
 

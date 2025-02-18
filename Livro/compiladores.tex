@@ -2,21 +2,34 @@
 
 \section{Compiladores}
 
-Neste capítulo, vamos abordar os compiladores de \LaTeX. Mas antes, precisamos entender o que é um compilador.
+%Neste capítulo, vamos abordar os compiladores de \LaTeX. Mas antes, precisamos entender o que é um compilador.
 
-\subsection{O que é um compilador?}
+% Um compilador é um programa que traduz um código de uma linguagem de programação para outra. Um exemplo dissos são os compiladores de C, que traduzem o código escrito em C para código de máquina, que pode ser executado pelo computador.
 
-Um compilador é um programa que traduz um código de uma linguagem de programação para outra. Um exemplo dissos são os compiladores de C, que traduzem o código escrito em C para código de máquina, que pode ser executado pelo computador.
+% Um compilador é um programa que lê um programa escrito em uma linguagem - a linguagem de origem - e o traduz para um programa equivalente em outra linguagem - a linguagem de destino. Como uma parte importante desse processo de tradução, o compilador relata ao seu usuário a presença de erros no programa de origem
 
-\subsection{Distriuições de \LaTeX}
+Um compilador é um programa que recebe como entrada um código escrito em uma determinada linguagem, chamada de linguagem fonte, e o converte em um código equivalente em outra linguagem, conhecida como linguagem alvo. Durante essa conversão, uma etapa das etapas do compilador é identificar e informar ao usuário sobre possíveis erros no código fonte. A figura \ref{fig:compilador} ilustra o processo de compilação.
+\cite{aho1977principles}.
 
-Existem várias distribuições de \LaTeX, que são pacotes que contêm o compilador de \LaTeX e outros programas necessários para compilar documentos em \LaTeX. Alguns exemplos de distribuições de \LaTeX são:
+\begin{figure}[h]
+	\centering
 
-\begin{itemize}
-	\item \textbf{TeX Live}: Uma distribuição de \LaTeX multiplataforma.\footnote{Disponível em \url{https://www.tug.org/texlive/}}
-	\item \textbf{MiKTeX}: Uma distribuição de \LaTeX para Windows.\footnote{Disponível em \url{https://miktex.org/}}
-	\item \textbf{MacTeX}: Uma distribuição de \LaTeX para macOS.\footnote{Disponível em \url{https://www.tug.org/mactex/}}
-\end{itemize}
+	\begin{tikzpicture}
+		\node[draw, rectangle, minimum width=3cm, minimum height=1cm] (source) at (0, 4) {Código fonte};
+		\node[draw, rectangle, minimum width=3cm, minimum height=1cm] (computer) at (0, 2) {Compilador};
+		\node[draw, rectangle, minimum width=3cm, minimum height=1cm] (target) at (0, 0) {Código alvo};
+		\node[draw, rectangle, minimum width=3cm, minimum height=1cm] (error) at (4, 2) {Erros};
+
+    \draw[->] (source) -- (computer);
+    \draw[->] (computer) -- (target);
+    \draw[->] (computer.east) -- (error.west);
+\end{tikzpicture}
+
+	\caption{Processo de compilação. Adaptado de \cite{aho1977principles}.}
+	\label{fig:compilador}
+\end{figure}
+
+Assim como os compiladores tradicionais, os compiladores de TeX e LaTeX também seguem um processo de conversão de código fonte para um formato de saída, geralmente um documento. No entanto, em vez de traduzir para uma linguagem de programação de baixo nível, esses compiladores transformam comandos e textos escritos em linguagens de marcação (como TeX ou LaTeX) em documentos formatados, com layout profissional e tipografia de alta qualidade. Durante esse processo, o compilador também identifica erros no código fonte, como comandos mal formados ou referências indefinidas, e os reporta ao usuário para correção.
 
 \subsection{Compiladores de \LaTeX}
 
