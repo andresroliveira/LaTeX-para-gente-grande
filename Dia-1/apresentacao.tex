@@ -1,79 +1,329 @@
 \documentclass[handout]{beamer}
-% \documentclass{beamer}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[brazil]{babel}
 
 \usetheme{Madrid}
-% \input{theme}
 
-\title{\LaTeX para gente grande}
+\title{\LaTeX\ para gente grande}
+\subtitle{Dia 1: Ecossistema, Compiladores e Fontes}
 \author[Andrês]{Andrês R. Oliveira}
-\date{Dia 1}
+\date{Minicurso LEM/UNICAMP}
 
 \begin{document}
 
+% Bloco 1 - Abertura e objetivos
 \begin{frame}
     \maketitle
 \end{frame}
 
-\begin{frame}{Sumário (da semana)}
+\begin{frame}{Objetivos do Dia}
     \begin{itemize}
-        \item Dia 1:
-              \begin{itemize}
-                  \item Compiladores
-                  \item Fontes
-                  \item Editoração de texto
-              \end{itemize}
-
-        \item Dia 2:
-              \begin{itemize}
-                  \item Beamer
-              \end{itemize}
-
-        \item Dia 3:
-              \begin{itemize}
-                  \item Tikz (parte 1)
-              \end{itemize}
-
-        \item Dia 4:
-              \begin{itemize}
-                  \item Tikz (parte 2)
-              \end{itemize}
+        \item Compreender o ecossistema \LaTeX\ e seus componentes.
+        \item Entender o fluxo de compilação e os arquivos auxiliares.
+        \item Diferenciar os motores de compilação (\texttt{pdflatex}, \texttt{xelatex}, \texttt{lualatex}).
+        \item Configurar fontes de forma profissional no \texttt{pdfLaTeX}.
+        \item Dominar técnicas de automação e diagnóstico de erros.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Sumário (do dia)}
+\begin{frame}{O que você saberá ao final da tarde}
     \begin{itemize}
-        \item Distribuições
-        \item Compiladores
-        \item Fontes
-        \item Editoração de texto
+        \item Por que o seu documento precisa ser compilado 3 vezes.
+        \item Como ler o arquivo \texttt{.log} sem se perder.
+        \item Como trocar fontes sem quebrar a hifenação.
+        \item Como automatizar o trabalho com \texttt{latexmk} e \texttt{make}.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Distribuições}
+% Bloco 2 - Ecossistema LaTeX
+\begin{frame}{LaTeX não é um programa único}
+    O que chamamos de ``LaTeX'' é na verdade um conjunto de ferramentas:
     \begin{itemize}
-        \item TeX Live
-        \item MiKTeX
-        \item MacTeX
+        \item \textbf{Distribuição}: O conjunto completo (TeX Live, MiKTeX).
+        \item \textbf{Editor}: Onde você digita (TeXstudio, VS Code, Vim).
+        \item \textbf{Motor}: O programa que compila (\texttt{pdflatex}).
+        \item \textbf{Classe}: O esqueleto do documento (\texttt{article}, \texttt{book}).
+        \item \textbf{Pacote}: Funcionalidades extras (\texttt{amsmath}, \texttt{tikz}).
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Compiladores}
+\begin{frame}{Distribuição: TeX Live e MiKTeX}
     \begin{itemize}
-        \item pdflatex
-        \item xelatex
-        \item lualatex
+        \item \textbf{TeX Live}: Padrão no Linux/Mac, multiplataforma, muito estável.
+        \item \textbf{MiKTeX}: Muito comum no Windows, instala pacotes sob demanda.
+    \end{itemize}
+    \vfill
+    \begin{block}{Dica técnica}
+        Sempre prefira a instalação completa (Full) para evitar problemas de dependências durante o trabalho offline.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Editor: Onde escrevemos}
+    O editor não é o compilador. Ele apenas chama o motor.
+    \begin{itemize}
+        \item \textbf{TeXstudio}: Especializado, possui assistentes para tabelas.
+        \item \textbf{VS Code}: Moderno, exige extensões (\textit{LaTeX Workshop}).
+        \item \textbf{Overleaf}: Editor na nuvem (baseado em TeX Live).
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Fim. The end! It's over!}
+\begin{frame}{Motor: Quem processa}
+    O binário que lê o seu \texttt{.tex} e gera o PDF.
+    \begin{itemize}
+        \item \texttt{pdflatex}: O nosso foco.
+        \item \texttt{xelatex}: O favorito para fontes do sistema.
+        \item \texttt{lualatex}: O mais moderno e extensível.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Classe: Estrutura do documento}
+    Define os comandos de alto nível (\texttt{\textbackslash chapter}, \texttt{\textbackslash section}).
+    \begin{itemize}
+        \item \texttt{article}: Para artigos curtos.
+        \item \texttt{book}: Para livros (possui \texttt{\textbackslash frontmatter}, \texttt{\textbackslash mainmatter}).
+        \item \texttt{beamer}: Para apresentações (como esta!).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Pacote: Extensão de funcionalidade}
+    Carregados no preâmbulo com \texttt{\textbackslash usepackage}.
+    \begin{itemize}
+        \item \texttt{amsmath}: Matemática profissional.
+        \item \texttt{graphicx}: Inclusão de imagens.
+        \item \texttt{hyperref}: Links e sumário clicável.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Confusões Comuns}
+    \begin{itemize}
+        \item ``O LaTeX não instalou no meu PC'': Provavelmente você instalou o editor, mas não a distribuição.
+        \item ``A fonte X não funciona'': Pode ser incompatibilidade entre o pacote da fonte e o motor de compilação.
+        \item ``O sumário sumiu'': Falta de compilações subsequentes.
+    \end{itemize}
+\end{frame}
+
+% Bloco 3 - Fluxo de compilação
+\begin{frame}{Fluxo Básico de Compilação}
     \begin{center}
-        \Huge Obrigado :))
+        \texttt{.tex} $\to$ \textbf{Motor} $\to$ \texttt{.pdf}
     \end{center}
+    \vfill
+    O motor lê o texto, aplica as regras da classe e dos pacotes, e gera o documento final.
+\end{frame}
+
+\begin{frame}{Arquivos Auxiliares}
+    A compilação gera subprodutos necessários:
+    \begin{itemize}
+        \item \texttt{.aux}: O mais importante. Guarda a memória do documento.
+        \item \texttt{.log}: O diário da compilação.
+        \item \texttt{.toc}: Sumário (\textit{Table of Contents}).
+        \item \texttt{.bbl}: Bibliografia formatada.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{O arquivo .aux: Memória entre compilações}
+    \begin{itemize}
+        \item Na 1ª vez: O motor vê um \texttt{\textbackslash label}, anota no \texttt{.aux}.
+        \item Na 2ª vez: O motor lê o \texttt{.aux} e resolve o \texttt{\textbackslash ref}.
+    \end{itemize}
+    \vfill
+    \begin{alertblock}{Importante}
+        Se você deletar o \texttt{.aux}, o próximo PDF terá ``??'' no lugar das referências.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{O arquivo .log: Registro e Diagnóstico}
+    \begin{itemize}
+        \item Contém avisos de pacotes obsoletos.
+        \item Lista as fontes que foram realmente embutidas no PDF.
+        \item É o primeiro lugar a olhar quando a compilação falha.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Por que compilar mais de uma vez?}
+    \begin{enumerate}
+        \item \textbf{1ª Passagem}: Coleta dados estruturais (títulos, labels).
+        \item \textbf{2ª Passagem}: Constrói o sumário e resolve referências.
+        \item \textbf{3ª Passagem}: Garante que o layout final (com sumário) não mudou as numerações de página.
+    \end{enumerate}
+\end{frame}
+
+% Bloco 4 - Motores de compilação
+\begin{frame}{pdflatex}
+    \begin{itemize}
+        \item Rápido e extremamente estável.
+        \item Modelo de fontes Type 1 (pacotes de fontes).
+        \item Excelente suporte ao \texttt{microtype}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{xelatex e lualatex}
+    \begin{itemize}
+        \item \textbf{XeLaTeX}: Suporte a Unicode e fontes do sistema (\texttt{.otf}, \texttt{.ttf}).
+        \item \textbf{LuaLaTeX}: Moderno, permite programar o comportamento do TeX usando Lua.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Por que o curso usa pdfLaTeX?}
+    \begin{itemize}
+        \item Compatibilidade garantida em periódicos científicos.
+        \item Estabilidade absoluta para documentos técnicos.
+        \item Não exige instalação de fontes específicas no sistema do usuário.
+    \end{itemize}
+\end{frame}
+
+% Bloco 5 - Fontes no pdfLaTeX
+\begin{frame}{A fonte padrão: Computer Modern}
+    \begin{itemize}
+        \item Criada por Donald Knuth.
+        \item Extremamente técnica e precisa para matemática.
+        \item Visual clássico do TeX dos anos 80.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{UTF-8 e Codificação de Entrada}
+    \begin{itemize}
+        \item Como o seu computador salva o arquivo \texttt{.tex}.
+        \item Use sempre \textbf{UTF-8}.
+        \item \texttt{\textbackslash usepackage[utf8]\{inputenc\}} (hoje é o padrão).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{fontenc e T1}
+    \begin{itemize}
+        \item \textbf{T1}: Essencial para línguas latinas.
+        \item Permite hifenação correta de palavras acentuadas.
+        \item Permite busca de caracteres como ``ç'' e ``á'' no PDF.
+    \end{itemize}
+    \vfill
+    \texttt{\textbackslash usepackage[T1]\{fontenc\}}
+\end{frame}
+
+\begin{frame}{Pacotes de Fontes}
+    Não usamos o arquivo da fonte diretamente, mas um pacote que o encapsula.
+    \begin{itemize}
+        \item \texttt{ebgaramond}: Elegância clássica.
+        \item \texttt{lmodern}: Versão melhorada da padrão.
+        \item \texttt{libertine}: Ótima para textos longos.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Microtype: O toque final}
+    Ajustes finos invisíveis.
+    \begin{itemize}
+        \item \textbf{Protrusão}: Alinhamento ótico das margens.
+        \item \textbf{Expansão}: Ajuste na largura dos glifos para evitar buracos no texto.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{fontspec: Apenas para XeLaTeX e LuaLaTeX}
+    \begin{itemize}
+        \item Seleciona fontes do sistema pelo nome.
+        \item \textbf{Não funciona com pdflatex}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Exemplo comparativo: fontes locais}
+    \begin{block}{XeLaTeX / LuaLaTeX apenas}
+        \texttt{\textbackslash setmainfont\{MinhaFonte.otf\}}
+    \end{block}
+    \vfill
+    \textit{Este recurso não é usado na configuração principal deste projeto.}
+\end{frame}
+
+% Bloco 6 - Automação
+\begin{frame}{O problema da compilação manual repetida}
+    Rodar manualmente:
+    \begin{enumerate}
+        \item \texttt{pdflatex principal.tex}
+        \item \texttt{bibtex principal.aux}
+        \item \texttt{pdflatex principal.tex}
+        \item \texttt{pdflatex principal.tex}
+    \end{enumerate}
+    É cansativo e propenso a esquecimentos.
+\end{frame}
+
+\begin{frame}{latexmk: Automação Total}
+    \begin{itemize}
+        \item Detecta se o arquivo mudou.
+        \item Roda o compilador o número de vezes necessário.
+        \item Limpa arquivos temporários se solicitado.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Makefile: Padrão de Projeto}
+    Encapsula o \texttt{latexmk} em um comando simples.
+    \vfill
+    No nosso projeto: \texttt{make}
+\end{frame}
+
+% Bloco 7 - Erros e Diagnóstico
+\begin{frame}{Estratégia de Diagnóstico}
+    \begin{alertblock}{Regra de Ouro}
+        Leia sempre a \textbf{primeira} mensagem de erro.
+    \end{alertblock}
+    \vfill
+    Os erros seguintes costumam ser apenas confusão do compilador tentando se recuperar do primeiro.
+\end{frame}
+
+\begin{frame}{Undefined control sequence}
+    \begin{itemize}
+        \item Você digitou o comando errado (ex: \texttt{\textbackslash secton}).
+        \item Você esqueceu de carregar o pacote que define o comando.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Chaves e ambientes não fechados}
+    \begin{itemize}
+        \item \texttt{Runaway argument?}: Falta fechar um \texttt{\}}.
+        \item \texttt{\textbackslash begin\{itemize\}} sem o respectivo \texttt{\textbackslash end\{itemize\}}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Overfull e Underfull \textbackslash hbox}
+    \begin{itemize}
+        \item \textbf{Overfull}: O texto ultrapassou a margem (estouro).
+        \item \textbf{Underfull}: O texto ficou muito espalhado (espaços feios).
+    \end{itemize}
+\end{frame}
+
+% Bloco 8 - Prática Guiada
+\begin{frame}{Laboratório 1}
+    Compilar o documento mínimo fornecido usando o \texttt{Makefile}.
+    \vfill
+    Comando: \texttt{make}
+\end{frame}
+
+\begin{frame}{Laboratório 2}
+    Inspecionar os arquivos \texttt{.aux} e \texttt{.log} gerados.
+\end{frame}
+
+\begin{frame}{Laboratório 3}
+    Provocar um erro de sintaxe proposital e encontrar a linha no arquivo \texttt{.log}.
+\end{frame}
+
+\begin{frame}{Laboratório 4}
+    Usar o comando \texttt{texdoc amsmath} no terminal para abrir o manual.
+\end{frame}
+
+% Bloco 9 - Fechamento
+\begin{frame}{Recapitulação}
+    \begin{itemize}
+        \item \LaTeX\ é um ecossistema.
+        \item \texttt{pdflatex} é robusto e estável.
+        \item T1 e UTF-8 são a base para o português.
+        \item Erros são normais: aprenda a ler o log.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Próximo Dia}
+    \begin{itemize}
+        \item Estrutura de documentos técnicos.
+        \item Escrita matemática avançada.
+        \item Gestão de bibliografia.
+    \end{itemize}
 \end{frame}
 
 \end{document}
-
