@@ -1,0 +1,497 @@
+\documentclass[handout]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{amssymb}
+
+\usetheme{Madrid}
+
+\title{\LaTeX\ para gente grande}
+\subtitle{Dia 2: Documentos Técnicos e Escrita Matemática}
+\author[Andrês Oliveira]{Andrês Oliveira}
+\date{Minicurso LEM/UNICAMP}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiterX{\inner}[2]{\langle}{\rangle}{#1,#2}
+
+\begin{document}
+
+% BLOCO 1 - ABERTURA
+\begin{frame}
+    \maketitle
+\end{frame}
+
+\begin{frame}{Objetivos da Tarde}
+    \begin{itemize}
+        \item Organizar um documento técnico em arquivos coerentes.
+        \item Escolher ambientes matemáticos de acordo com a estrutura da fórmula.
+        \item Usar recursos da pilha AMS para numeração, alinhamento e operadores.
+        \item Criar macros semânticas para notação recorrente.
+        \item Configurar cabeçalhos e rodapés de forma controlada.
+        \item Refatorar trechos matemáticos frágeis.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problema do Dia}
+    Um documento matemático pode compilar e ainda assim estar mal estruturado.
+    \vfill
+    \begin{itemize}
+        \item Fórmulas longas sem ambiente adequado.
+        \item Operadores escritos como texto improvisado.
+        \item Delimitadores escolhidos mecanicamente.
+        \item Labels e referências difíceis de manter.
+        \item Notação repetida sem macros próprias.
+    \end{itemize}
+\end{frame}
+
+% BLOCO 2 - ESTRUTURA DE PROJETO
+\begin{frame}[fragile]{Arquivo Principal}
+    O arquivo principal deve mostrar a estrutura do projeto.
+\begin{lstlisting}[language={[latex]TeX}]
+\documentclass{book}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+
+\begin{document}
+\input{introducao}
+\input{preliminares}
+\input{resultados}
+\end{document}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Convenções de Organização}
+    \begin{itemize}
+        \item Arquivos com nomes descritivos: \texttt{preliminares.tex}, \texttt{resultados.tex}.
+        \item Labels com prefixos: \texttt{sec:}, \texttt{eq:}, \texttt{fig:}, \texttt{tab:}.
+        \item Macros no preâmbulo ou em arquivo dedicado quando crescerem.
+        \item Cabeçalhos e rodapés devem orientar, não competir com o texto.
+        \item Exemplos pequenos devem continuar compiláveis isoladamente.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Cabeçalho e Rodapé}
+    Elementos repetidos de página pertencem à estrutura editorial do documento.
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\nouppercase{\leftmark}}
+\fancyhead[RO]{\nouppercase{\rightmark}}
+\fancyfoot[C]{\thepage}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Página Especial}
+    Páginas de abertura costumam precisar de um estilo mais discreto.
+\begin{lstlisting}[language={[latex]TeX}]
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\end{lstlisting}
+    \textbf{Critério:} mostre apenas informação útil para navegação.
+\end{frame}
+
+% BLOCO 3 - PILHA AMS
+\begin{frame}[fragile]{A Pilha AMS}
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage{mathtools} % carrega amsmath
+\usepackage{amssymb}
+\end{lstlisting}
+    \begin{itemize}
+        \item \textbf{\texttt{amsmath}}: ambientes, numeração, operadores e estruturas matemáticas.
+        \item \textbf{\texttt{amssymb}}: símbolos adicionais.
+        \item \textbf{\texttt{mathtools}}: extensões práticas sobre \texttt{amsmath}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Decisão Principal}
+    Antes de escolher um ambiente, identifique a estrutura matemática.
+    \vfill
+    \begin{itemize}
+        \item Uma equação isolada?
+        \item Uma equação longa com um único número?
+        \item Um cálculo com alinhamento vertical?
+        \item Um grupo de equações independentes?
+        \item Um sistema com numeração subordinada?
+    \end{itemize}
+\end{frame}
+
+% BLOCO 4 - AMBIENTES
+\begin{frame}[fragile]{Equação Isolada}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{equation}\label{eq:energia}
+E = mc^2
+\end{equation}
+
+\[
+E = mc^2
+\]
+\end{lstlisting}
+    \textbf{Uso:} uma fórmula com papel próprio no texto.
+\end{frame}
+
+\begin{frame}[fragile]{Equação Longa: \texttt{split}}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{equation}\label{eq:funcional}
+\begin{split}
+J(u)
+  &= \int_\Omega |\nabla u|^2\,dx \\
+  &\quad + \int_\Omega V|u|^2\,dx
+       - \int_\Omega F(x,u)\,dx .
+\end{split}
+\end{equation}
+\end{lstlisting}
+    \textbf{Ideia:} várias linhas, mas uma única equação numerada.
+\end{frame}
+
+\begin{frame}[fragile]{Cálculo Alinhado: \texttt{align}}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{align}
+\|u+v\|^2
+  &= \langle u+v, u+v\rangle \\
+  &= \|u\|^2 + 2\langle u,v\rangle + \|v\|^2 .
+\end{align}
+\end{lstlisting}
+    O ponto de alinhamento vem antes do símbolo relacional: \texttt{\&=}.
+\end{frame}
+
+\begin{frame}[fragile]{Evite \texttt{eqnarray}}
+\begin{lstlisting}[language={[latex]TeX}]
+% Evite em documentos novos
+\begin{eqnarray}
+a &=& b + c
+\end{eqnarray}
+
+% Prefira
+\begin{align}
+a &= b + c
+\end{align}
+\end{lstlisting}
+    \texttt{eqnarray} produz espaçamento inadequado e lida mal com numeração em linhas longas.
+\end{frame}
+
+\begin{frame}[fragile]{Grupos Sem Alinhamento: \texttt{gather}}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{gather}
+A+B+C = 0,\\
+\int_\Omega f(x)\,dx = 1.
+\end{gather}
+\end{lstlisting}
+    Use quando as equações pertencem ao mesmo bloco, mas não compartilham uma coluna de alinhamento.
+\end{frame}
+
+% BLOCO 5 - NUMERACAO
+\begin{frame}[fragile]{Referências de Equações}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{equation}\label{eq:identidade}
+(a+b)^2 = a^2 + 2ab + b^2
+\end{equation}
+
+Pela identidade \eqref{eq:identidade}, temos...
+\end{lstlisting}
+    \textbf{\texttt{\textbackslash eqref}} imprime os parênteses e preserva o padrão tipográfico.
+\end{frame}
+
+\begin{frame}[fragile]{Controlando Números}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{align}
+f(x) &= x^2 + 2x + 1 \notag\\
+     &= (x+1)^2. \label{eq:quadrado}
+\end{align}
+\end{lstlisting}
+    Nem toda linha precisa receber número. Numere apenas o que será referenciado ou tem papel próprio.
+\end{frame}
+
+\begin{frame}[fragile]{Numeração Subordinada}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{subequations}\label{eq:sistema}
+\begin{align}
+-\Delta u &= f && \text{em } \Omega,\\
+u &= 0 && \text{em } \partial\Omega.
+\end{align}
+\end{subequations}
+\end{lstlisting}
+    Útil para sistemas: uma referência para o conjunto e referências para linhas específicas.
+\end{frame}
+
+% BLOCO 6 - TEXTO E JUSTIFICATIVAS
+\begin{frame}[fragile]{Texto Dentro de Matemática}
+\begin{lstlisting}[language={[latex]TeX}]
+\[
+P_{r-j} =
+\begin{cases}
+0, & \text{se } r-j \text{ e impar},\\
+1, & \text{se } r-j \text{ e par}.
+\end{cases}
+\]
+\end{lstlisting}
+    Use \texttt{\textbackslash text} para palavras e frases dentro de fórmulas.
+\end{frame}
+
+\begin{frame}[fragile]{Justificativas em Cálculos}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{align}
+x &= y_1 - y_2 + y_3
+     && \text{por \eqref{eq:recorrencia}}\\
+  &= y^\prime \circ y^*
+     && \text{pela definicao.}
+\end{align}
+\end{lstlisting}
+    A segunda coluna separa a expressão matemática da justificativa textual.
+\end{frame}
+
+\begin{frame}[fragile]{Interrupções com Alinhamento}
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{align}
+A_1 &= N_0(\lambda;\Omega') - \phi(\lambda;\Omega'),\\
+A_2 &= \phi(\lambda;\Omega') - \phi(\lambda;\Omega),
+\shortintertext{e portanto}
+A_3 &= N(\lambda;\omega).
+\end{align}
+\end{lstlisting}
+    \texttt{\textbackslash shortintertext} vem de \texttt{mathtools}.
+\end{frame}
+
+% BLOCO 7 - OPERADORES E MACROS
+\begin{frame}[fragile]{Operadores Declarados}
+\begin{lstlisting}[language={[latex]TeX}]
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+
+\[
+\rank A + \rank B \geq \rank(A+B),
+\qquad
+\tr(AB) = \tr(BA).
+\]
+\end{lstlisting}
+    Operadores declarados recebem fonte e espaçamento apropriados.
+\end{frame}
+
+\begin{frame}[fragile]{Operadores com Limites}
+\begin{lstlisting}[language={[latex]TeX}]
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\[
+u = \argmin_{v\in V} J(v).
+\]
+\end{lstlisting}
+    A forma estrelada permite limites abaixo/acima em modo display.
+\end{frame}
+
+\begin{frame}[fragile]{Macros Semânticas}
+\begin{lstlisting}[language={[latex]TeX}]
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\dd}{\,d}
+
+\[
+\int_{\R^n} f(x)\dd x < \eps.
+\]
+\end{lstlisting}
+    Uma macro deve expressar notação recorrente, não apenas economizar digitação.
+\end{frame}
+
+\begin{frame}[fragile]{Comandos com Argumentos}
+\begin{lstlisting}[language={[latex]TeX}]
+\newcommand{\norma}[1]{\lVert#1\rVert}
+\newcommand{\derivada}[2]{\frac{d #1}{d #2}}
+
+\[
+\norma{u}
+\qquad
+\derivada{y}{x}
+\]
+\end{lstlisting}
+    \texttt{\#1} e \texttt{\#2} são substituídos pelos argumentos do comando.
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{\textbackslash newcommand} e \texttt{\textbackslash def}}
+\begin{lstlisting}[language={[latex]TeX}]
+% Preferivel em documentos LaTeX
+\newcommand{\R}{\mathbb{R}}
+
+% Primitivo TeX: comum em codigo interno
+\def\R{\mathbb{R}}
+\end{lstlisting}
+    \texttt{\textbackslash newcommand} verifica conflitos. \texttt{\textbackslash def} sobrescreve de forma mais direta.
+\end{frame}
+
+\begin{frame}[fragile]{Redefinição Deliberada}
+\begin{lstlisting}[language={[latex]TeX}]
+\renewcommand{\epsilon}{\varepsilon}
+\providecommand{\dd}{\,d}
+\end{lstlisting}
+    \begin{itemize}
+        \item \texttt{\textbackslash renewcommand}: redefinição explícita.
+        \item \texttt{\textbackslash providecommand}: define apenas se ainda não existir.
+    \end{itemize}
+\end{frame}
+
+% BLOCO 8 - DELIMITADORES
+\begin{frame}[fragile]{Delimitadores Pareados}
+\begin{lstlisting}[language={[latex]TeX}]
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\[
+\abs{x}
+\qquad
+\abs*{\frac{x}{1+x^2}}
+\qquad
+\norm[\Big]{\sum_{k=1}^n v_k}
+\]
+\end{lstlisting}
+    \texttt{mathtools} oferece forma natural, automática e tamanho explícito.
+\end{frame}
+
+\begin{frame}[fragile]{Produto Interno}
+\begin{lstlisting}[language={[latex]TeX}]
+\DeclarePairedDelimiterX{\inner}[2]
+  {\langle}{\rangle}{#1,#2}
+
+\[
+\inner{u}{v}
+\qquad
+\inner*{u}{\frac{v}{\|v\|}}
+\]
+\end{lstlisting}
+    A macro concentra a decisão tipográfica da notação.
+\end{frame}
+
+% BLOCO 9 - MATRIZES E CASOS
+\begin{frame}[fragile]{Matrizes}
+\begin{lstlisting}[language={[latex]TeX}]
+\[
+A =
+\begin{pmatrix}
+1 & 0\\
+0 & 1
+\end{pmatrix},
+\qquad
+\det A =
+\begin{vmatrix}
+a & b\\
+c & d
+\end{vmatrix}.
+\]
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Casos com \texttt{dcases}}
+\begin{lstlisting}[language={[latex]TeX}]
+\[
+f(x) =
+\begin{dcases}
+\frac{\sin x}{x}, & x\neq 0,\\
+1, & x = 0.
+\end{dcases}
+\]
+\end{lstlisting}
+    \texttt{dcases}, de \texttt{mathtools}, usa estilo de display nos casos.
+\end{frame}
+
+\begin{frame}[fragile]{Reticências Semânticas}
+\begin{lstlisting}[language={[latex]TeX}]
+\[
+a_1, a_2, \dotsc, a_n
+\qquad
+a_1 + a_2 + \dotsb + a_n
+\qquad
+a_1 a_2 \dotsm a_n
+\]
+\end{lstlisting}
+    O comando informa o contexto: vírgulas, operadores binários ou multiplicação.
+\end{frame}
+
+% BLOCO 10 - LABORATORIO
+\begin{frame}[fragile]{Laboratório: Refatoração Matemática}
+    \textbf{Objetivo:} transformar um trecho que apenas compila em um trecho matematicamente estruturado.
+
+    \textbf{Arquivo:} \texttt{ams-refatoracao.tex}
+
+\begin{lstlisting}[language={[latex]TeX}]
+\begin{eqnarray}
+||u+v||^2 &=& <u+v,u+v>\\
+&=& ||u||^2 + 2<u,v> + ||v||^2.
+\end{eqnarray}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Laboratório: Tarefas}
+    \begin{enumerate}
+        \item Carregar \texttt{mathtools} e \texttt{amssymb}.
+        \item Substituir \texttt{eqnarray} por \texttt{align}.
+        \item Criar macros para norma e produto interno.
+        \item Numerar apenas a linha final.
+        \item Referenciar a identidade com \texttt{\textbackslash eqref}.
+    \end{enumerate}
+    \vfill
+    \textbf{Observe:} a mudança melhora o código-fonte e o PDF.
+\end{frame}
+
+\begin{frame}[fragile]{Laboratório: Uma Solução}
+\begin{lstlisting}[language={[latex]TeX}]
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiterX{\inner}[2]{\langle}{\rangle}{#1,#2}
+
+\begin{align}
+\norm{u+v}^2
+  &= \inner{u+v}{u+v} \notag\\
+  &= \norm{u}^2 + 2\inner{u}{v} + \norm{v}^2.
+     \label{eq:paralelogramo}
+\end{align}
+\end{lstlisting}
+\end{frame}
+
+% BLOCO 11 - FECHAMENTO
+\begin{frame}{Recapitulação}
+    \begin{itemize}
+        \item A escolha do ambiente deve seguir a estrutura da fórmula.
+        \item \texttt{amsmath} resolve alinhamento, numeração e operadores.
+        \item \texttt{mathtools} amplia delimitadores e construções práticas.
+        \item Macros semânticas tornam a notação consistente.
+        \item Cabeçalhos e rodapés são parte da arquitetura do documento.
+        \item Refatorar matemática é melhorar manutenção, não apenas aparência.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Próximo Dia}
+    \begin{itemize}
+        \item Estrutura de apresentações com Beamer.
+        \item Frames, blocos e colunas.
+        \item Overlays e progressão de aula.
+        \item Código em slides.
+        \item Boas práticas para apresentação técnica.
+    \end{itemize}
+\end{frame}
+
+\end{document}

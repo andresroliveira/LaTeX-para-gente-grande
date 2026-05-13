@@ -1,0 +1,437 @@
+\chapter{Documentos técnicos e escrita matemática}
+
+Depois de entender o ciclo de compilação, os arquivos auxiliares e o papel dos pacotes, o próximo passo é usar essa infraestrutura para escrever documentos técnicos que continuam legíveis quando crescem. Um texto matemático pequeno tolera improvisos: uma equação isolada, um comando escrito diretamente no corpo do texto, uma referência feita à mão. Em um artigo, uma dissertação, uma lista extensa ou uma apostila, esses improvisos passam a gerar inconsistências.
+
+Este capítulo trata de três problemas recorrentes: organizar o documento em partes, compor matemática com os ambientes apropriados e criar comandos semânticos para a notação usada no texto. O objetivo não é decorar todos os comandos dos pacotes da American Mathematical Society, mas entender quais decisões eles permitem tomar.
+
+\section{Estrutura de um documento técnico}
+
+Um documento técnico tende a crescer em camadas. O preâmbulo reúne decisões globais: classe, pacotes, fontes, idioma, estilo de referências e comandos próprios. O corpo do documento contém o texto. Arquivos auxiliares são gerados pelo compilador e registram informações necessárias entre passagens, como labels, citações e sumário.
+
+Misturar todas essas camadas no mesmo arquivo funciona em exemplos mínimos, mas dificulta manutenção. Uma forma simples de modularização é manter um arquivo principal e carregar capítulos ou seções com \verb|\input|:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Arquivo principal com capítulos separados}]
+\documentclass{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{mathtools}
+\usepackage{amssymb}
+
+\begin{document}
+
+\input{introducao}
+\input{preliminares}
+\input{resultados}
+
+\end{document}
+\end{lstlisting}
+
+O comando \verb|\input| copia o conteúdo do arquivo indicado naquele ponto da compilação. Para o leitor e para o compilador, o resultado é como se o conteúdo estivesse escrito no arquivo principal. A vantagem é organizacional: cada capítulo pode ser editado separadamente, e o arquivo principal continua pequeno o bastante para mostrar a estrutura geral do projeto.
+
+Em documentos técnicos, nomes previsíveis ajudam. Arquivos como \texttt{preliminares.tex}, \texttt{resultados.tex} e \texttt{apendice-demonstracoes.tex} comunicam melhor o papel do arquivo do que nomes genéricos como \texttt{parte1.tex}. O mesmo vale para labels: \verb|sec:preliminares|, \verb|eq:energia| e \verb|fig:dominio| são mais úteis do que \verb|label1|.
+
+\section{A pilha AMS}
+
+O pacote \texttt{amsmath} é a base moderna para escrita matemática em \LaTeX. Ele fornece ambientes de equações, comandos para operadores, controle de numeração, matrizes, casos, setas extensíveis, frações e vários ajustes tipográficos. O pacote \texttt{amssymb} adiciona símbolos matemáticos comuns em textos avançados. O pacote \texttt{mathtools} estende o \texttt{amsmath}: carrega \texttt{amsmath} automaticamente e oferece ferramentas para delimitadores, versões refinadas de ambientes e comandos úteis para ajustes finos.
+
+Uma configuração comum para documentos com bastante matemática é:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Pacotes para escrita matemática}]
+\usepackage{mathtools} % carrega amsmath
+\usepackage{amssymb}
+\end{lstlisting}
+
+Também é comum encontrar:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Carregamento explícito de amsmath}]
+\usepackage{amsmath}
+\usepackage{amssymb}
+\end{lstlisting}
+
+As duas escolhas são aceitáveis. Quando o documento usa recursos de \texttt{mathtools}, carregar apenas \verb|\usepackage{mathtools}| evita redundância. Quando o documento usa apenas recursos clássicos da AMS, \verb|\usepackage{amsmath}| deixa a dependência explícita.
+
+\section{Ambientes de equações}
+
+Um erro comum é tratar todos os displays matemáticos como se fossem iguais. A escolha do ambiente comunica a estrutura da fórmula: uma equação isolada, uma equação longa quebrada em linhas, um grupo de equações independentes ou um cálculo alinhado por relações.
+
+Para uma equação única numerada, use \texttt{equation}. Para uma equação única sem número, use \verb|\[...\]| ou \texttt{equation*}:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Equação isolada}]
+\begin{equation}\label{eq:energia}
+E = mc^2
+\end{equation}
+
+\[
+E = mc^2
+\]
+\end{lstlisting}
+
+Quando uma equação é longa, mas ainda representa uma única igualdade ou identidade, \texttt{split} dentro de \texttt{equation} permite quebrar linhas mantendo um único número:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Equação longa com split}]
+\begin{equation}\label{eq:funcional}
+\begin{split}
+J(u)
+  &= \int_\Omega |\nabla u(x)|^2\,dx \\
+  &\quad + \int_\Omega V(x)|u(x)|^2\,dx
+       - \int_\Omega F(x,u(x))\,dx .
+\end{split}
+\end{equation}
+\end{lstlisting}
+
+O ponto de alinhamento vem antes do símbolo relacional. Em \texttt{align}, por exemplo, escreve-se \verb|&=|, não \verb|=&|. Isso preserva o espaçamento matemático esperado ao redor da relação.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Cálculo alinhado}]
+\begin{align}
+\|u+v\|^2
+  &= \langle u+v, u+v\rangle \\
+  &= \|u\|^2 + 2\langle u,v\rangle + \|v\|^2 .
+\end{align}
+\end{lstlisting}
+
+Quando há várias equações sem alinhamento comum, \texttt{gather} é mais adequado que \texttt{align}. Quando há uma equação longa sem ponto natural de alinhamento, \texttt{multline} pode ser melhor que forçar um alinhamento artificial.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Equações sem alinhamento comum}]
+\begin{gather}
+A+B+C = 0,\\
+\int_\Omega f(x)\,dx = 1.
+\end{gather}
+\end{lstlisting}
+
+O ambiente \texttt{eqnarray} deve ser evitado em documentos novos. Ele produz espaçamento inadequado ao redor de relações e lida mal com numeração em equações longas. Para documentos já existentes, a substituição por \texttt{align} ou por \texttt{equation} com \texttt{split} costuma ser uma melhoria objetiva.
+
+\section{Numeração e referências}
+
+Referências para equações devem usar labels, não números digitados manualmente. O comando \verb|\eqref|, fornecido por \texttt{amsmath}, imprime a referência com parênteses:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Referência a equação}]
+\begin{equation}\label{eq:identidade}
+(a+b)^2 = a^2 + 2ab + b^2
+\end{equation}
+
+Pela identidade \eqref{eq:identidade}, obtemos...
+\end{lstlisting}
+
+Em ambientes com várias linhas, nem toda linha precisa ser numerada. Use \verb|\notag| quando a linha não deve receber número:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Controle de numeração por linha}]
+\begin{align}
+f(x) &= x^2 + 2x + 1 \notag\\
+     &= (x+1)^2. \label{eq:quadrado}
+\end{align}
+\end{lstlisting}
+
+Quando um grupo de equações deve compartilhar uma numeração principal, com letras subordinadas, use \texttt{subequations}:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Numeração subordinada}]
+\begin{subequations}\label{eq:sistema}
+\begin{align}
+-\Delta u &= f && \text{em } \Omega,\\
+u &= 0 && \text{em } \partial\Omega.
+\end{align}
+\end{subequations}
+\end{lstlisting}
+
+Esse padrão é útil quando o texto precisa referir-se ao sistema inteiro e também a cada equação individual.
+
+\section{Texto dentro de matemática}
+
+Texto dentro de uma fórmula não deve ser improvisado com \verb|\mathrm| quando a intenção é escrever uma palavra ou uma frase. O comando \verb|\text| preserva o tamanho adequado em índices e mantém o texto como texto:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Texto em uma fórmula}]
+\[
+P_{r-j} =
+\begin{cases}
+0, & \text{se } r-j \text{ e impar},\\
+1, & \text{se } r-j \text{ e par}.
+\end{cases}
+\]
+\end{lstlisting}
+
+Em cálculos alinhados, justificativas curtas podem aparecer em uma coluna separada:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Justificativas em align}]
+\begin{align}
+x &= y_1 - y_2 + y_3 && \text{por \eqref{eq:recorrencia}}\\
+  &= y^\prime \circ y^* && \text{pela definicao de composicao}.
+\end{align}
+\end{lstlisting}
+
+Quando uma frase precisa interromper um cálculo mantendo o alinhamento, \verb|\intertext| é apropriado. Para uma interrupção muito curta, \texttt{mathtools} oferece \verb|\shortintertext|, que usa menos espaço vertical.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Interrupção preservando alinhamento}]
+\begin{align}
+A_1 &= N_0(\lambda;\Omega') - \phi(\lambda;\Omega'),\\
+A_2 &= \phi(\lambda;\Omega') - \phi(\lambda;\Omega),
+\shortintertext{e portanto}
+A_3 &= N(\lambda;\omega).
+\end{align}
+\end{lstlisting}
+
+\section{Operadores matemáticos}
+
+Funções como \verb|\sin|, \verb|\log| e \verb|\lim| são compostas em fonte romana e recebem espaçamento próprio. O mesmo tratamento deve ser dado a operadores definidos pelo autor. Escrever \verb|rank A|, \verb|\mathrm{rank} A| ou \verb|Rank A| diretamente no corpo do documento resolve apenas o caso local; declarar o operador resolve a notação do documento inteiro.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Declaração de operadores}]
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\id}{id}
+
+\[
+\rank A + \rank B \geq \rank(A+B),
+\qquad
+\tr(AB) = \tr(BA).
+\]
+\end{lstlisting}
+
+Quando o operador deve receber limites abaixo e acima em modo display, usa-se a forma estrelada:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Operador com limites}]
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\esssup}{ess\,sup}
+
+\[
+u = \argmin_{v\in V} J(v),
+\qquad
+\esssup_{x\in\Omega} |f(x)| < \infty .
+\]
+\end{lstlisting}
+
+Essa prática também torna o código mais semântico. O comando \verb|\argmin| diz o que está sendo escrito; uma sequência manual de letras, espaços e fontes apenas tenta reproduzir uma aparência.
+
+\section{Macros semânticas}
+
+Macros próprias são uma das ferramentas mais importantes em documentos matemáticos. Elas reduzem repetição, evitam inconsistências e separam a notação do modo como ela é desenhada. Se uma notação aparece dezenas de vezes, ela deve ter um nome.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Macros para notação recorrente}]
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\dd}{\,d}
+
+\[
+\int_{\R^n} f(x)\dd x < \eps.
+\]
+\end{lstlisting}
+
+O nome da macro deve representar o significado pretendido. Em vez de criar apenas abreviações visuais, como \verb|\bbR|, prefira comandos que revelem o papel da notação no texto quando isso for possível. Em textos longos, comandos como \verb|\norm|, \verb|\abs|, \verb|\inner|, \verb|\Prob| e \verb|\E| ajudam a manter consistência.
+
+\section{Definição de comandos}
+
+Criar comandos próprios é parte normal da escrita de documentos técnicos em \LaTeX. O ponto importante é distinguir comandos que representam notação matemática de comandos que apenas encurtam digitação. Uma macro bem escolhida torna o código-fonte mais legível e permite alterar a notação de forma controlada.
+
+A forma usual para criar comandos em documentos \LaTeX\ é \verb|\newcommand|. Ela verifica se o comando já existe e emite erro se houver conflito. Esse comportamento é desejável: se um nome já foi definido por uma classe, por um pacote ou por outra parte do projeto, sobrescrevê-lo silenciosamente pode produzir efeitos difíceis de diagnosticar.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Definição segura de comandos}]
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\norma}[1]{\lVert#1\rVert}
+
+\[
+u \in \R^n,
+\qquad
+\norma{u} < \eps.
+\]
+\end{lstlisting}
+
+Comandos com argumentos usam marcadores como \verb|#1|, \verb|#2| e assim por diante. No exemplo, \verb|\norma{u}| substitui \verb|#1| por \verb|u|. Para notações mais estruturadas, vale escolher nomes que descrevam a operação:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Comandos com argumentos}]
+\newcommand{\restricao}[2]{#1\vert_{#2}}
+\newcommand{\derivada}[2]{\frac{d #1}{d #2}}
+
+\[
+\restricao{f}{A},
+\qquad
+\derivada{y}{x}.
+\]
+\end{lstlisting}
+
+Quando a intenção é redefinir um comando existente, use \verb|\renewcommand|. Isso deixa explícito que a redefinição é deliberada. Quando o comando deve ser criado apenas se ainda não existir, use \verb|\providecommand|. Essa última forma é comum em arquivos compartilhados entre projetos, porque permite definir uma macro padrão sem sobrescrever uma definição feita pelo documento principal.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Redefinição e definição condicional}]
+\renewcommand{\epsilon}{\varepsilon}
+\providecommand{\dd}{\,d}
+\end{lstlisting}
+
+Em código TeX mais antigo ou em implementações internas de pacotes, aparece frequentemente o primitivo \verb|\def|. Ele define comandos de forma mais direta e não faz as verificações de segurança de \verb|\newcommand|. Por isso, em material de curso e em documentos de usuário, \verb|\newcommand| e \verb|\renewcommand| são escolhas melhores. \verb|\def| é útil para entender código de baixo nível, mas não deve ser usado como padrão em documentos técnicos comuns.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Definição primitiva em TeX}]
+% Forma primitiva: comum em codigo de pacote,
+% mas menos segura para documentos de usuario.
+\def\R{\mathbb{R}}
+\end{lstlisting}
+
+\section{Cabeçalhos e rodapés}
+
+Cabeçalhos e rodapés fazem parte da estrutura editorial do documento. Eles ajudam o leitor a se localizar, especialmente em textos longos impressos ou em PDFs consultados fora do editor. Em um livro, é comum colocar o número da página no rodapé e informações como título do livro, autor ou capítulo no cabeçalho. Em um artigo, a escolha pode ser mais discreta ou até inexistente, dependendo da classe e das normas de submissão.
+
+O pacote mais usado para esse controle é \texttt{fancyhdr}. Ele permite limpar o estilo padrão da página, definir campos de cabeçalho e rodapé e controlar a linha horizontal do cabeçalho:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Cabeçalho e rodapé com fancyhdr}]
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{} % limpa cabecalho e rodape
+
+\fancyhead[LE]{\nouppercase{\leftmark}}
+\fancyhead[RO]{\nouppercase{\rightmark}}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\end{lstlisting}
+
+As letras usadas por \texttt{fancyhdr} indicam a posição: \texttt{L}, \texttt{C} e \texttt{R} significam esquerda, centro e direita; \texttt{E} e \texttt{O} significam páginas pares e ímpares. Em documentos frente e verso, essa distinção é relevante porque a margem interna muda de lado. Em documentos simples, muitas vezes basta usar \verb|\fancyfoot[C]{\thepage}|.
+
+Também é possível definir um estilo próprio para páginas especiais, como a primeira página de um capítulo. Isso evita que uma página de abertura receba o mesmo cabeçalho de uma página comum:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Estilo para páginas especiais}]
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\end{lstlisting}
+
+Do ponto de vista técnico, cabeçalho e rodapé não devem carregar informação demais. Se o cabeçalho fica mais saliente que o texto, ele deixa de orientar e passa a competir com o conteúdo. Em documentos matemáticos, a prioridade continua sendo legibilidade: número de página claro, marcas de capítulo ou seção quando úteis, e pouco ruído visual.
+
+\section{Delimitadores e notação pareada}
+
+O uso automático de \verb|\left| e \verb|\right| parece conveniente, mas nem sempre produz o melhor resultado. Esses comandos escolhem o tamanho mecanicamente e podem criar delimitadores grandes demais em expressões pequenas. Em muitos casos, tamanhos explícitos como \verb|\bigl|, \verb|\bigr|, \verb|\Bigl| e \verb|\Bigr| produzem resultado mais controlado.
+
+Para valor absoluto e norma, \texttt{amsmath} recomenda comandos distintos para barras esquerda e direita:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Delimitadores com amsmath}]
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+
+\[
+\abs{x-y} \leq \norm{u-v}.
+\]
+\end{lstlisting}
+
+O \texttt{mathtools} generaliza essa ideia com \verb|\DeclarePairedDelimiter|:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Delimitadores com mathtools}]
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\[
+\abs{x}
+\qquad
+\abs*{\frac{x}{1+x^2}}
+\qquad
+\norm[\Big]{\sum_{k=1}^n v_k}
+\]
+\end{lstlisting}
+
+A versão sem estrela usa o tamanho natural. A versão estrelada usa delimitadores automáticos. A versão com argumento opcional permite escolher explicitamente o tamanho. Essa combinação preserva uma interface semântica e ainda permite ajuste tipográfico local.
+
+Para notações com mais estrutura, como produto interno ou conjuntos por compreensão, \texttt{mathtools} fornece \verb|\DeclarePairedDelimiterX|:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Produto interno e conjunto por compreensão}]
+\DeclarePairedDelimiterX{\inner}[2]{\langle}{\rangle}{#1,#2}
+
+\providecommand{\given}{}
+\newcommand{\SetSymbol}[1][]{%
+  \nonscript\:#1\vert\allowbreak\nonscript\:\mathopen{}}
+\DeclarePairedDelimiterX{\Set}[1]{\{}{\}}{%
+  \renewcommand{\given}{\SetSymbol[\delimsize]}#1}
+
+\[
+\inner{u}{v}
+\qquad
+\Set*{x\in X \given f(x)>0}
+\]
+\end{lstlisting}
+
+Esse exemplo é mais avançado, mas ilustra uma ideia central: a macro deve expressar a notação matemática, não apenas economizar digitação.
+
+\section{Matrizes, casos e pontos}
+
+O \texttt{amsmath} oferece ambientes de matrizes com delimitadores prontos: \texttt{pmatrix}, \texttt{bmatrix}, \texttt{vmatrix}, \texttt{Vmatrix} e outros. Para matrizes pequenas dentro de texto, \texttt{smallmatrix} evita uma construção grande demais para a linha.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Matrizes com amsmath}]
+\[
+A =
+\begin{pmatrix}
+1 & 0\\
+0 & 1
+\end{pmatrix},
+\qquad
+\det A =
+\begin{vmatrix}
+a & b\\
+c & d
+\end{vmatrix}.
+\]
+\end{lstlisting}
+
+O \texttt{mathtools} também fornece variantes úteis, como \texttt{dcases}, em que o conteúdo dos casos é composto em estilo de display:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Casos em estilo de display}]
+\[
+f(x) =
+\begin{dcases}
+\frac{\sin x}{x}, & x\neq 0,\\
+1, & x = 0.
+\end{dcases}
+\]
+\end{lstlisting}
+
+Para reticências, comandos semânticos como \verb|\dotsc|, \verb|\dotsb|, \verb|\dotsm| e \verb|\dotsi| comunicam o contexto: vírgulas, operadores binários, multiplicação ou integrais. Essa distinção permite que o pacote escolha a forma tipográfica apropriada.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Reticências semânticas}]
+\[
+a_1, a_2, \dotsc, a_n
+\qquad
+a_1 + a_2 + \dotsb + a_n
+\qquad
+a_1 a_2 \dotsm a_n
+\]
+\end{lstlisting}
+
+\section{Um exemplo de refatoração}
+
+O trecho abaixo compila, mas mistura decisões tipográficas, notação e estrutura:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Trecho matemático frágil}]
+\begin{eqnarray}
+||u+v||^2 &=& <u+v,u+v>\\
+&=& ||u||^2 + 2<u,v> + ||v||^2.
+\end{eqnarray}
+\end{lstlisting}
+
+Uma versão mais robusta usa ambiente adequado, macros semânticas e delimitadores declarados:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Trecho refatorado}]
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiterX{\inner}[2]{\langle}{\rangle}{#1,#2}
+
+\begin{align}
+\norm{u+v}^2
+  &= \inner{u+v}{u+v}\\
+  &= \norm{u}^2 + 2\inner{u}{v} + \norm{v}^2.
+\end{align}
+\end{lstlisting}
+
+A diferença não é apenas visual. Na segunda versão, o ambiente expressa que há um cálculo alinhado; os comandos \verb|\norm| e \verb|\inner| expressam a notação; a troca de estilo dos delimitadores pode ser feita em um único ponto do preâmbulo.
+
+\section{Critérios práticos}
+
+Ao escrever matemática em um documento técnico, algumas perguntas ajudam a escolher a estrutura:
+
+\begin{itemize}
+    \item A fórmula é uma equação isolada ou parte de um cálculo?
+    \item Cada linha precisa de número?
+    \item Há um ponto matemático natural de alinhamento?
+    \item A notação aparece muitas vezes no documento?
+    \item O delimitador deve ter tamanho automático ou tamanho controlado?
+    \item O texto dentro da fórmula é uma palavra, uma justificativa ou parte da notação?
+    \item A informação repetida em cabeçalhos e rodapés ajuda a navegação ou apenas adiciona ruído?
+\end{itemize}
+
+Essas perguntas evitam uma escrita matemática puramente visual. Em \LaTeX, a qualidade do resultado depende de escolher estruturas que correspondem ao papel matemático do trecho.
