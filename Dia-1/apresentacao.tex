@@ -178,15 +178,16 @@ Ola, mundo!
 \begin{frame}{pdflatex, xelatex e lualatex}
     \begin{itemize}
         \item \textbf{pdflatex}: usa o modelo tradicional de fontes do TeX.
-        \item \textbf{fontspec}: Pacote para Xe/LuaTeX que carrega fontes do sistema.
+        \item \textbf{xelatex/lualatex}: podem usar fontes do sistema com \texttt{fontspec}.
+        \item \textbf{Decisão do projeto}: o livro e os slides compilam com \texttt{pdflatex}.
     \end{itemize}
     \vfill
-    \begin{block}{Escolha do curso: pdflatex}
+    \begin{block}{Motivo prático}
         Reduz dependências de fontes instaladas no sistema operacional de cada participante.
     \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Configuração de Fontes em Português}
+\begin{frame}[fragile]{Fontes no pdfLaTeX}
     No \texttt{pdfLaTeX}, a configuração básica envolve três elementos:
     \begin{itemize}
         \item \textbf{UTF-8}: Codificação de entrada.
@@ -199,6 +200,17 @@ Ola, mundo!
 \usepackage[T1]{fontenc}
 \usepackage{ebgaramond}
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Fontes por pacote}
+    No \texttt{pdfLaTeX}, a troca de família tipográfica normalmente passa por pacotes.
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext}
+\usepackage{newpxmath}
+\end{lstlisting}
+    \vfill
+    \textbf{Consequência:} o documento depende da distribuição TeX, não das fontes instaladas pelo sistema operacional.
 \end{frame}
 
 \begin{frame}{Por que usar T1?}
@@ -220,16 +232,32 @@ Ola, mundo!
     Esses ajustes atuam na justificação e no acabamento visual dos parágrafos.
 \end{frame}
 
-\begin{frame}[fragile]{fontspec (Apenas para conhecimento)}
-    \textbf{Como seria em XeLaTeX/LuaLaTeX:}
+\begin{frame}[fragile]{Fontes do sistema}
+    Em \texttt{XeLaTeX} ou \texttt{LuaLaTeX}, \texttt{fontspec} pode carregar fontes instaladas no sistema:
 \begin{lstlisting}[language={[latex]TeX}]
 \usepackage{fontspec}
-\setmainfont{Arial} % Usa fonte do sistema
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{DejaVu Sans Mono}
 \end{lstlisting}
     \vfill
     \begin{alertblock}{Importante}
-        Este código \textbf{não funciona} no nosso projeto porque usamos \texttt{pdflatex}.
+        Este código não pertence ao preâmbulo real do projeto, que usa \texttt{pdflatex}.
     \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Arquivos locais .ttf ou .otf}
+    Também é possível distribuir os arquivos de fonte junto com o projeto:
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage{fontspec}
+\setmainfont[
+  Path = fontes/,
+  UprightFont = MinhaFonte-Regular.ttf,
+  BoldFont = MinhaFonte-Bold.ttf
+]{MinhaFonte}
+\end{lstlisting}
+    \vfill
+    \textbf{Trade-off:} melhora o controle sobre a fonte usada, mas exige cuidar de caminhos e licença.
 \end{frame}
 
 % BLOCO 6 - AUTOMAÇÃO
@@ -331,6 +359,22 @@ Ola, mundo!
     \end{enumerate}
 
     \textbf{Resultado:} Você deve ter acesso ao manual oficial, que é mais preciso que tutoriais de blog.
+\end{frame}
+
+\begin{frame}[fragile]{Laboratório 6: fontes fora do pdfLaTeX}
+    \textbf{Objetivo:} comparar o fluxo do projeto com um arquivo isolado em \texttt{XeLaTeX}.
+
+    \textbf{Tarefa:}
+    \begin{enumerate}
+        \item Criar \texttt{fontes-sistema.tex} fora do projeto principal.
+        \item Usar \texttt{fontspec} e uma fonte disponível no sistema.
+        \item Compilar uma vez com \texttt{pdflatex} e depois com \texttt{xelatex}.
+    \end{enumerate}
+\begin{lstlisting}
+pdflatex fontes-sistema.tex
+xelatex fontes-sistema.tex
+\end{lstlisting}
+    \textbf{Observe:} \texttt{fontspec} exige \texttt{XeLaTeX} ou \texttt{LuaLaTeX}.
 \end{frame}
 
 % BLOCO 9 - FECHAMENTO

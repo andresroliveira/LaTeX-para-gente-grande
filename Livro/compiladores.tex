@@ -49,6 +49,42 @@ Este projeto utiliza o \texttt{pdflatex} por estabilidade e compatibilidade com 
     \item \textbf{Pacotes de Fontes}: Como o \texttt{pdflatex} não carrega arquivos \texttt{.ttf} diretamente, usamos pacotes como \texttt{ebgaramond} ou \texttt{newpxtext} que encapsulam as métricas necessárias.
 \end{itemize}
 
+\section{Fontes do sistema e arquivos de fonte}
+
+O modelo tradicional usado pelo \texttt{pdflatex} não trabalha diretamente com fontes instaladas no sistema operacional nem com arquivos \texttt{.ttf} ou \texttt{.otf} escolhidos pelo usuário no preâmbulo. Em geral, uma família tipográfica precisa estar disponível como pacote \LaTeX, com métricas, codificações e arquivos auxiliares preparados para o TeX. Por isso, no fluxo com \texttt{pdflatex}, é comum escolher fontes por pacotes:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Fonte por pacote no pdfLaTeX}]
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext}
+\usepackage{newpxmath}
+\end{lstlisting}
+
+Esse modelo é menos direto que selecionar um arquivo de fonte, mas tem uma vantagem prática em cursos e projetos reproduzíveis: se a distribuição TeX contém o pacote, o documento compila sem depender das fontes instaladas no sistema operacional do usuário.
+
+Em \texttt{xelatex} e \texttt{lualatex}, a situação é diferente. Esses compiladores trabalham melhor com Unicode e podem usar o pacote \texttt{fontspec} para carregar fontes pelo nome com que aparecem no sistema:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Fonte instalada no sistema com XeLaTeX ou LuaLaTeX}]
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{DejaVu Sans Mono}
+\end{lstlisting}
+
+Também é possível carregar arquivos de fonte distribuídos junto com o projeto. Nesse caso, o documento deixa de depender do nome da fonte instalada no sistema, mas passa a depender da presença dos arquivos no caminho indicado:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Arquivos locais de fonte com XeLaTeX ou LuaLaTeX}]
+\usepackage{fontspec}
+\setmainfont[
+    Path = fontes/,
+    UprightFont = MinhaFonte-Regular.ttf,
+    ItalicFont = MinhaFonte-Italic.ttf,
+    BoldFont = MinhaFonte-Bold.ttf,
+    BoldItalicFont = MinhaFonte-BoldItalic.ttf
+]{MinhaFonte}
+\end{lstlisting}
+
+Esses exemplos não devem ser copiados para o preâmbulo real deste livro, pois o projeto compila com \texttt{pdflatex}. Eles são relevantes, contudo, para entender as escolhas possíveis em outros projetos. Usar fontes do sistema é conveniente em documentos pessoais e em ambientes controlados, mas reduz a portabilidade: outro computador pode não ter a mesma fonte, ou pode tê-la com nome interno diferente. Distribuir arquivos \texttt{.ttf} ou \texttt{.otf} junto com o projeto melhora a reprodutibilidade técnica, mas exige atenção à licença da fonte e à organização dos arquivos.
+
 \section{Microtipografia com microtype}
 
 O pacote \texttt{microtype} introduz ajustes finos na composição tipográfica:
@@ -56,20 +92,6 @@ O pacote \texttt{microtype} introduz ajustes finos na composição tipográfica:
     \item \textbf{Protrusão}: permite que certos sinais de pontuação avancem levemente na margem, reduzindo irregularidades visuais.
     \item \textbf{Expansão}: aplica pequenas variações na largura dos caracteres para melhorar a justificação do parágrafo.
 \end{itemize}
-
-\section{O que é fontspec (Comparativo)}
-
-\textit{Nota: O exemplo abaixo não é compatível com o pdflatex e serve apenas para demonstração didática do uso de fontes do sistema em XeLaTeX ou LuaLaTeX.}
-
-\begin{lstlisting}[language={[latex]TeX}, caption={Uso de fontspec}]
-\usepackage{fontspec}
-\setmainfont[
-    Path = fontes/,
-    UprightFont = MinhaFonte-Regular.otf,
-    BoldFont = MinhaFonte-Bold.otf
-]{MinhaFonte}
-\end{lstlisting}
-Neste código, o \texttt{fontspec} permite selecionar arquivos locais (\texttt{Path}) ou fontes instaladas no sistema pelo nome real. Esse recurso pertence ao fluxo com XeLaTeX ou LuaLaTeX, não ao fluxo adotado neste projeto.
 
 \section{Automação e Fluxos de Trabalho}
 
@@ -94,10 +116,32 @@ A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros 
 
 \section{Consulta de Documentação}
 
-A documentação local é a fonte mais confiável. O comando \texttt{texdoc} abre o manual oficial de qualquer pacote instalado:
+A documentação do ecossistema TeX costuma ser instalada junto com a distribuição. Isso é uma diferença importante em relação a muitos tutoriais encontrados na web: quando um pacote está instalado localmente, em geral o seu manual também está. O comando \texttt{texdoc} é a interface mais simples para acessar esses manuais sem precisar procurar arquivos PDF manualmente dentro da árvore da distribuição.
+
+Na prática, \texttt{texdoc} recebe o nome de um pacote, classe ou ferramenta e tenta abrir a documentação correspondente. Para pacotes muito usados, o resultado costuma ser direto:
+
 \begin{lstlisting}[language=bash]
 texdoc amsmath
 texdoc graphicx
 texdoc beamer
 \end{lstlisting}
-Para buscas globais e versões mais recentes, utilize o \textbf{CTAN} (\url{https://ctan.org}).
+
+Esses comandos abrem, respectivamente, a documentação do \texttt{amsmath}, o guia de gráficos do \LaTeX\ e o manual do Beamer. Também é possível consultar ferramentas de linha de comando e classes:
+
+\begin{lstlisting}[language=bash]
+texdoc latexmk
+texdoc book
+texdoc listings
+\end{lstlisting}
+
+Nem toda busca retorna um único resultado. Alguns nomes são ambíguos, e o \texttt{texdoc} pode apresentar uma lista numerada para escolha. Isso não é erro: significa apenas que a distribuição contém mais de um documento relacionado ao termo pesquisado. Nesses casos, vale observar o nome do arquivo, o pacote associado e a descrição curta exibida pelo próprio comando.
+
+Ao ler um manual, a estratégia não deve ser tentar absorver tudo de uma vez. Manuais de pacotes como \texttt{beamer}, \texttt{pgf}/TikZ ou \texttt{biblatex} podem ter centenas de páginas. O uso mais eficiente é localizar a seção relevante para a tarefa atual: opções de pacote, sintaxe de um ambiente, exemplos mínimos, avisos de compatibilidade e limitações conhecidas. O índice, a busca textual no PDF e os exemplos oficiais costumam ser mais úteis do que uma leitura linear.
+
+Quando a documentação local não existe, está desatualizada ou não corresponde à versão usada em outro ambiente, o próximo ponto de consulta é o \textbf{CTAN} (\url{https://ctan.org}). O CTAN reúne pacotes, documentação, histórico de versões e links para os arquivos distribuídos. Para problemas de compilação, entretanto, é importante comparar a documentação consultada com a versão efetivamente instalada, pois uma opção disponível em uma versão recente pode não existir em uma distribuição TeX mais antiga.
+
+Há também uma interface online inspirada no \texttt{texdoc}: \url{https://texdoc.org}. Ela permite buscar documentação de pacotes pelo navegador, de modo semelhante a uma consulta local com \texttt{texdoc -l}. Esse recurso é útil quando o aluno está em uma máquina sem a documentação instalada, usando um ambiente online, ou apenas quer consultar rapidamente um manual sem abrir o terminal. Ainda assim, a mesma cautela vale: o documento encontrado online pode corresponder a uma versão diferente da instalada localmente.
+
+Uma forma prática de organizar as consultas é distinguir o papel de cada fonte. Use \texttt{texdoc} quando estiver trabalhando em uma instalação local e quiser a documentação que acompanha a sua distribuição. Use \url{https://texdoc.org} quando precisar de uma busca rápida pelo navegador. Use o CTAN quando quiser verificar a página oficial do pacote, arquivos distribuídos, histórico e versão mais recente.
+
+Como regra de trabalho, prefira a documentação oficial do pacote antes de recorrer a respostas soltas de fóruns ou tutoriais. Materiais externos podem ser úteis, especialmente para exemplos, mas frequentemente omitem versões, opções carregadas no preâmbulo ou restrições de compilador. Em um projeto que precisa ser reproduzível, esses detalhes importam.
