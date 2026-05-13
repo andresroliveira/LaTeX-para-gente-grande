@@ -95,8 +95,31 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Cabeçalho e Rodapé}
-    Elementos repetidos de página pertencem à estrutura editorial do documento.
+\begin{frame}{Política de Página}
+    Cabeçalho e rodapé são decisões estruturais do documento.
+    \vfill
+    \begin{itemize}
+        \item O que ajuda o leitor a se localizar?
+        \item O documento é frente e verso ou apenas digital?
+        \item A abertura de capítulo deve ter o mesmo estilo das páginas comuns?
+        \item O número de página deve ficar no rodapé ou no lado externo?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Rodapé Simples}
+    Para documentos curtos, muitas vezes basta numerar a página.
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Cabeçalho em Documento Longo}
 \begin{lstlisting}[language={[latex]TeX}]
 \usepackage{fancyhdr}
 
@@ -106,9 +129,23 @@
 \fancyhead[RO]{\nouppercase{\rightmark}}
 \fancyfoot[C]{\thepage}
 \end{lstlisting}
+    \texttt{LE} e \texttt{RO} distinguem páginas pares e ímpares.
 \end{frame}
 
-\begin{frame}[fragile]{Página Especial}
+\begin{frame}[fragile]{Marcas de Capítulo e Seção}
+\begin{lstlisting}[language={[latex]TeX}]
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LE,RO]{\thepage}
+\end{lstlisting}
+    \begin{itemize}
+        \item \texttt{\textbackslash leftmark}: normalmente capítulo.
+        \item \texttt{\textbackslash rightmark}: normalmente seção.
+        \item \texttt{\textbackslash nouppercase}: evita caixa alta automática.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Página Especial: \texttt{plain}}
     Páginas de abertura costumam precisar de um estilo mais discreto.
 \begin{lstlisting}[language={[latex]TeX}]
 \fancypagestyle{plain}{%
@@ -118,6 +155,14 @@
 }
 \end{lstlisting}
     \textbf{Critério:} mostre apenas informação útil para navegação.
+\end{frame}
+
+\begin{frame}[fragile]{Aviso de \texttt{headheight}}
+    Se o cabeçalho não cabe na área reservada, o log pode avisar.
+\begin{lstlisting}[language={[latex]TeX}]
+\setlength{\headheight}{15pt}
+\end{lstlisting}
+    \textbf{Interpretação:} o problema não é só estético; o layout da página precisa reservar espaço suficiente.
 \end{frame}
 
 % BLOCO 3 - PILHA AMS
@@ -470,6 +515,38 @@ a_1 a_2 \dotsm a_n
      \label{eq:paralelogramo}
 \end{align}
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Laboratório: Cabeçalho e Rodapé}
+    \textbf{Objetivo:} configurar um estilo de página para um documento técnico.
+
+    \textbf{Tarefa:}
+    \begin{enumerate}
+        \item Criar um documento \texttt{book} com duas seções.
+        \item Carregar \texttt{fancyhdr}.
+        \item Colocar número de página no lado externo.
+        \item Usar capítulo/seção no cabeçalho.
+    \end{enumerate}
+\begin{lstlisting}[language={[latex]TeX}]
+\documentclass[twoside]{book}
+\usepackage{fancyhdr}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Laboratório: Estilo de Página}
+\begin{lstlisting}[language={[latex]TeX}]
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+}
+\end{lstlisting}
+    \textbf{Observe:} páginas comuns e páginas de abertura não precisam ter o mesmo desenho.
 \end{frame}
 
 % BLOCO 11 - FECHAMENTO

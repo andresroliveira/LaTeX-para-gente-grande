@@ -8,7 +8,27 @@ Este capítulo trata de três problemas recorrentes: organizar o documento em pa
 
 Um documento técnico tende a crescer em camadas. O preâmbulo reúne decisões globais: classe, pacotes, fontes, idioma, estilo de referências e comandos próprios. O corpo do documento contém o texto. Arquivos auxiliares são gerados pelo compilador e registram informações necessárias entre passagens, como labels, citações e sumário.
 
-Misturar todas essas camadas no mesmo arquivo funciona em exemplos mínimos, mas dificulta manutenção. Uma forma simples de modularização é manter um arquivo principal e carregar capítulos ou seções com \verb|\input|:
+Misturar todas essas camadas no mesmo arquivo funciona em exemplos mínimos, mas dificulta manutenção. A dificuldade aparece quando o autor precisa mover uma seção, revisar apenas um capítulo, localizar a definição de uma macro ou comparar versões do texto. Um documento técnico organizado deve deixar claro onde ficam as decisões globais e onde fica o conteúdo.
+
+Uma estrutura simples e suficiente para muitos projetos é:
+
+\begin{lstlisting}[caption={Estrutura possível de projeto}]
+artigo/
+  artigo.tex
+  secoes/
+    introducao.tex
+    preliminares.tex
+    resultados.tex
+  figs/
+    dominio.pdf
+    grafico.pdf
+  macros.tex
+  referencias.bib
+\end{lstlisting}
+
+Essa organização não é obrigatória, mas explicita responsabilidades. O arquivo principal controla a compilação. Os arquivos de seção contêm texto. Figuras ficam em diretório próprio. Macros recorrentes podem ficar no preâmbulo ou em um arquivo dedicado, carregado antes do corpo do documento.
+
+Uma forma simples de modularização é manter um arquivo principal e carregar capítulos ou seções com \verb|\input|:
 
 \begin{lstlisting}[language={[latex]TeX}, caption={Arquivo principal com capítulos separados}]
 \documentclass{book}
@@ -30,11 +50,31 @@ Misturar todas essas camadas no mesmo arquivo funciona em exemplos mínimos, mas
 
 O comando \verb|\input| copia o conteúdo do arquivo indicado naquele ponto da compilação. Para o leitor e para o compilador, o resultado é como se o conteúdo estivesse escrito no arquivo principal. A vantagem é organizacional: cada capítulo pode ser editado separadamente, e o arquivo principal continua pequeno o bastante para mostrar a estrutura geral do projeto.
 
-Em documentos técnicos, nomes previsíveis ajudam. Arquivos como \texttt{preliminares.tex}, \texttt{resultados.tex} e \texttt{apendice-demonstracoes.tex} comunicam melhor o papel do arquivo do que nomes genéricos como \texttt{parte1.tex}. O mesmo vale para labels: \verb|sec:preliminares|, \verb|eq:energia| e \verb|fig:dominio| são mais úteis do que \verb|label1|.
+O comando \verb|\include| também carrega arquivos, mas cria quebras de página e trabalha com arquivos auxiliares próprios. Ele é útil em livros ou teses grandes, principalmente quando combinado com \verb|\includeonly| para compilar apenas partes do projeto durante a revisão.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Compilação parcial com includeonly}]
+\includeonly{capitulos/resultados}
+
+\begin{document}
+\include{capitulos/introducao}
+\include{capitulos/preliminares}
+\include{capitulos/resultados}
+\end{document}
+\end{lstlisting}
+
+Em documentos técnicos, nomes previsíveis ajudam. Arquivos como \texttt{preliminares.tex}, \texttt{resultados.tex} e \texttt{apendice-demonstracoes.tex} comunicam melhor o papel do arquivo do que nomes genéricos como \texttt{parte1.tex}. O mesmo vale para labels: \verb|sec:preliminares|, \verb|eq:energia| e \verb|fig:dominio| são mais úteis do que \verb|label1|. Uma convenção pequena, aplicada de forma consistente, reduz o custo de manutenção.
 
 \section{A pilha AMS}
 
 O pacote \texttt{amsmath} é a base moderna para escrita matemática em \LaTeX. Ele fornece ambientes de equações, comandos para operadores, controle de numeração, matrizes, casos, setas extensíveis, frações e vários ajustes tipográficos. O pacote \texttt{amssymb} adiciona símbolos matemáticos comuns em textos avançados. O pacote \texttt{mathtools} estende o \texttt{amsmath}: carrega \texttt{amsmath} automaticamente e oferece ferramentas para delimitadores, versões refinadas de ambientes e comandos úteis para ajustes finos.
+
+É útil pensar nesses pacotes como camadas:
+
+\begin{description}
+    \item[\texttt{amsmath}] fornece a infraestrutura principal para fórmulas exibidas, alinhamentos, numeração, operadores e construções matemáticas.
+    \item[\texttt{amssymb}] amplia o repertório de símbolos, como relações, setas e alfabetos matemáticos.
+    \item[\texttt{mathtools}] complementa o \texttt{amsmath} com recursos práticos para delimitadores, casos em estilo de display, interrupções curtas em alinhamentos e ajustes finos de espaçamento.
+\end{description}
 
 Uma configuração comum para documentos com bastante matemática é:
 
@@ -51,6 +91,8 @@ Também é comum encontrar:
 \end{lstlisting}
 
 As duas escolhas são aceitáveis. Quando o documento usa recursos de \texttt{mathtools}, carregar apenas \verb|\usepackage{mathtools}| evita redundância. Quando o documento usa apenas recursos clássicos da AMS, \verb|\usepackage{amsmath}| deixa a dependência explícita.
+
+Em um minicurso avançado, a questão mais importante não é ``qual pacote carrega mais comandos'', mas qual pacote permite escrever a intenção matemática com menos improviso. Ambientes como \texttt{align} e \texttt{split} descrevem a estrutura da dedução. Comandos como \verb|\DeclareMathOperator| descrevem operadores. \verb|\DeclarePairedDelimiter| descreve delimitadores que têm papel semântico no texto.
 
 \section{Ambientes de equações}
 
@@ -100,6 +142,26 @@ A+B+C = 0,\\
 \end{gather}
 \end{lstlisting}
 
+Para equações longas sem uma coluna de alinhamento natural, \texttt{multline} distribui a primeira linha à esquerda, a última à direita e as linhas intermediárias de forma centrada:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Equação longa sem alinhamento natural}]
+\begin{multline}
+a_1+a_2+\cdots+a_n
++ b_1+b_2+\cdots+b_n \\
++ c_1+c_2+\cdots+c_n
++ d_1+d_2+\cdots+d_n = 0.
+\end{multline}
+\end{lstlisting}
+
+Quando o espaçamento entre colunas precisa ser controlado explicitamente, \texttt{alignat} é uma alternativa a \texttt{align}. Ele exige informar quantos pares de colunas alinhadas serão usados:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Alinhamento com controle de espaçamento}]
+\begin{alignat}{2}
+u_t &= \Delta u &&+ f(u),\\
+v_t &= \Delta v &&+ g(v).
+\end{alignat}
+\end{lstlisting}
+
 O ambiente \texttt{eqnarray} deve ser evitado em documentos novos. Ele produz espaçamento inadequado ao redor de relações e lida mal com numeração em equações longas. Para documentos já existentes, a substituição por \texttt{align} ou por \texttt{equation} com \texttt{split} costuma ser uma melhoria objetiva.
 
 \section{Numeração e referências}
@@ -135,6 +197,24 @@ u &= 0 && \text{em } \partial\Omega.
 \end{lstlisting}
 
 Esse padrão é útil quando o texto precisa referir-se ao sistema inteiro e também a cada equação individual.
+
+Em textos longos, pode ser desejável numerar equações por seção ou capítulo. O \texttt{amsmath} fornece \verb|\numberwithin| para amarrar o contador de equações a outro contador:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Numeração por seção}]
+\numberwithin{equation}{section}
+\end{lstlisting}
+
+Com isso, equações podem aparecer como (2.1), (2.2), (3.1) e assim por diante. Essa escolha deve ser feita no preâmbulo e precisa ser coerente com o tipo de documento. Em um artigo curto, numeração sequencial pode ser suficiente. Em uma tese, livro ou apostila extensa, numeração por seção ou capítulo facilita a localização.
+
+Há ainda situações em que um número automático não é a melhor etiqueta. O comando \verb|\tag| permite indicar uma marca manual, por exemplo em uma hipótese ou identidade clássica:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Etiqueta manual com tag}]
+\begin{equation}\tag{H}\label{eq:hipotese-H}
+\int_\Omega F(x,u)\,dx \leq C(1+\|u\|^p).
+\end{equation}
+\end{lstlisting}
+
+Esse recurso deve ser usado com moderação. Se tudo recebe uma etiqueta manual, o documento perde o benefício da numeração automática.
 
 \section{Texto dentro de matemática}
 
@@ -266,9 +346,25 @@ Em código TeX mais antigo ou em implementações internas de pacotes, aparece f
 
 \section{Cabeçalhos e rodapés}
 
-Cabeçalhos e rodapés fazem parte da estrutura editorial do documento. Eles ajudam o leitor a se localizar, especialmente em textos longos impressos ou em PDFs consultados fora do editor. Em um livro, é comum colocar o número da página no rodapé e informações como título do livro, autor ou capítulo no cabeçalho. Em um artigo, a escolha pode ser mais discreta ou até inexistente, dependendo da classe e das normas de submissão.
+Cabeçalhos e rodapés fazem parte da estrutura editorial do documento. Eles ajudam o leitor a se localizar, especialmente em textos longos impressos ou em PDFs consultados fora do editor. Em um livro, é comum colocar o número da página no rodapé e informações como título do livro, autor, capítulo ou seção no cabeçalho. Em um artigo, a escolha pode ser mais discreta ou até inexistente, dependendo da classe e das normas de submissão.
 
-O pacote mais usado para esse controle é \texttt{fancyhdr}. Ele permite limpar o estilo padrão da página, definir campos de cabeçalho e rodapé e controlar a linha horizontal do cabeçalho:
+Esse assunto merece atenção porque cabeçalho e rodapé ficam em quase todas as páginas. Um erro de configuração pequeno se repete no documento inteiro. Um excesso de informação também. O objetivo não é decorar comandos do pacote, mas projetar uma política de página: o que aparece em páginas comuns, o que aparece em aberturas de capítulo, onde entra o número da página e quais informações realmente ajudam a navegação.
+
+O pacote mais usado para esse controle é \texttt{fancyhdr}. Ele permite limpar o estilo padrão da página, definir campos de cabeçalho e rodapé e controlar as linhas horizontais. Um exemplo mínimo para documento simples é:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Rodapé simples com número de página}]
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\end{lstlisting}
+
+Nesse caso, o documento usa apenas o número da página centralizado no rodapé. É uma configuração discreta, adequada para textos curtos, listas e materiais em que o cabeçalho não acrescentaria informação útil.
+
+Em documentos longos, especialmente frente e verso, é comum diferenciar páginas pares e ímpares. O exemplo abaixo coloca a marca do capítulo em páginas pares, a marca da seção em páginas ímpares e o número da página no rodapé:
 
 \begin{lstlisting}[language={[latex]TeX}, caption={Cabeçalho e rodapé com fancyhdr}]
 \usepackage{fancyhdr}
@@ -284,7 +380,23 @@ O pacote mais usado para esse controle é \texttt{fancyhdr}. Ele permite limpar 
 \renewcommand{\footrulewidth}{0pt}
 \end{lstlisting}
 
-As letras usadas por \texttt{fancyhdr} indicam a posição: \texttt{L}, \texttt{C} e \texttt{R} significam esquerda, centro e direita; \texttt{E} e \texttt{O} significam páginas pares e ímpares. Em documentos frente e verso, essa distinção é relevante porque a margem interna muda de lado. Em documentos simples, muitas vezes basta usar \verb|\fancyfoot[C]{\thepage}|.
+As letras usadas por \texttt{fancyhdr} indicam a posição: \texttt{L}, \texttt{C} e \texttt{R} significam esquerda, centro e direita; \texttt{E} e \texttt{O} significam páginas pares e ímpares. Em documentos frente e verso, essa distinção é relevante porque a margem interna muda de lado. O par \texttt{LE}/\texttt{RO}, por exemplo, costuma indicar posições externas: esquerda em página par e direita em página ímpar.
+
+Os comandos \verb|\leftmark| e \verb|\rightmark| são marcas mantidas pela classe do documento. Em classes como \texttt{book}, \verb|\leftmark| normalmente contém informação de capítulo e \verb|\rightmark| contém informação de seção. O comando \verb|\nouppercase| evita que essas marcas sejam convertidas automaticamente para maiúsculas, comportamento comum em alguns estilos.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Cabeçalhos externos em documento frente e verso}]
+\documentclass[twoside]{book}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\end{lstlisting}
+
+Esse desenho põe o número de página no lado externo, onde é mais fácil encontrá-lo em material impresso, e deixa a informação textual no lado interno. A escolha inversa também é possível; o importante é que a regra seja consistente.
 
 Também é possível definir um estilo próprio para páginas especiais, como a primeira página de um capítulo. Isso evita que uma página de abertura receba o mesmo cabeçalho de uma página comum:
 
@@ -296,7 +408,31 @@ Também é possível definir um estilo próprio para páginas especiais, como a 
 }
 \end{lstlisting}
 
-Do ponto de vista técnico, cabeçalho e rodapé não devem carregar informação demais. Se o cabeçalho fica mais saliente que o texto, ele deixa de orientar e passa a competir com o conteúdo. Em documentos matemáticos, a prioridade continua sendo legibilidade: número de página claro, marcas de capítulo ou seção quando úteis, e pouco ruído visual.
+A razão para redefinir \texttt{plain} é que muitas classes aplicam esse estilo automaticamente em páginas de abertura de capítulo. Se o usuário configura apenas \verb|\pagestyle{fancy}|, pode se surpreender ao ver algumas páginas com comportamento diferente. Em vez de combater isso localmente página por página, é melhor definir o estilo \texttt{plain} de forma explícita.
+
+Outro detalhe técnico frequente é a altura do cabeçalho. Se o conteúdo do cabeçalho não cabe na dimensão reservada, o \LaTeX\ pode emitir um aviso envolvendo \verb|\headheight|. A solução não é ignorar o log, mas reservar altura suficiente:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Ajuste da altura do cabeçalho}]
+\setlength{\headheight}{15pt}
+\end{lstlisting}
+
+Esse ajuste deve aparecer no preâmbulo, junto da configuração de página. Se o cabeçalho usa fonte maior, duas linhas ou elementos gráficos, pode ser necessário aumentar esse valor. Em um material técnico sóbrio, porém, cabeçalhos de uma linha costumam ser suficientes.
+
+O pacote também permite criar estilos nomeados. Isso é útil quando o documento tem partes com comportamento diferente: capa sem número, páginas preliminares com numeração romana, corpo principal com cabeçalhos completos e apêndices com uma marca simplificada.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Estilo de página nomeado}]
+\fancypagestyle{semcabecalho}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+\thispagestyle{semcabecalho}
+\end{lstlisting}
+
+\verb|\thispagestyle| altera apenas a página atual. \verb|\pagestyle| altera o estilo a partir daquele ponto. Essa diferença é importante em capas, páginas de abertura, dedicatórias, sumários e páginas com figuras grandes.
+
+Do ponto de vista editorial, cabeçalho e rodapé não devem carregar informação demais. Se o cabeçalho fica mais saliente que o texto, ele deixa de orientar e passa a competir com o conteúdo. Em documentos matemáticos, a prioridade continua sendo legibilidade: número de página claro, marcas de capítulo ou seção quando úteis, e pouco ruído visual. Um bom critério é perguntar se a informação repetida ajuda o leitor a se localizar. Se não ajuda, provavelmente deve sair.
 
 \section{Delimitadores e notação pareada}
 
