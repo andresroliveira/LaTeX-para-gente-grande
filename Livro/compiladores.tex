@@ -1,145 +1,103 @@
 \chapter{Compiladores, Fontes e Automação}
 
-\section{Introdução: o que significa compilar em LaTeX}
+A compreensão profunda do processo de compilação é o que diferencia o usuário casual do \LaTeX\ de um editor técnico profissional. Frequentemente, frustrações comuns --- como referências cruzadas que aparecem como ``??'', sumários vazios ou erros de fontes não reconhecidas --- derivam de uma visão superficial do funcionamento interno do sistema. Entender que o editor não é o compilador e que o \LaTeX\ é um ecossistema modular é o primeiro passo para dominar a ferramenta.
 
-No contexto do \LaTeX, o termo ``compilar'' refere-se ao processo de transformar um arquivo de texto puro, contendo marcações lógicas e conteúdo, em um documento final formatado, geralmente em formato PDF. Diferente de processadores de texto \textit{WYSIWYG} (\textit{What You See Is What You Get}), onde a formatação é aplicada visualmente de forma imediata, o \LaTeX\ exige uma etapa intermediária de processamento.
+\section{Ecossistema: Distribuição, Editor, Compilador, Classe e Pacote}
 
-O arquivo fonte (com extensão \texttt{.tex}) serve como um conjunto de instruções para um motor tipográfico. Durante a compilação, o motor interpreta os comandos, calcula as quebras de linha, o posicionamento de glifos, a numeração de páginas e a organização de elementos estruturais. Este processo não é isolado; ele gera uma série de arquivos auxiliares que armazenam metadados necessários para resolver referências cruzadas e índices. Além disso, o registro da compilação, contendo avisos e erros, é fundamental para que o autor possa ajustar o documento conforme necessário.
-
-\section{Ecossistema: distribuição, editor, motor, classe e pacote}
-
-Um erro comum entre iniciantes é tratar o \LaTeX\ como um programa único e monolítico. Na realidade, ele é um ecossistema composto por diversos componentes que interagem entre si:
+O \LaTeX\ não é um programa único, mas um conjunto de componentes interdependentes que interagem para gerar o documento final.
 
 \begin{itemize}
-    \item \textbf{Distribuição TeX}: É o conjunto completo de ferramentas, binários, fontes e pacotes necessários. Exemplos principais são o \textbf{TeX Live} (multiplataforma e padrão em sistemas Linux) e o \textbf{MiKTeX} (popular em ambiente Windows).
-    \item \textbf{Editor}: É a interface onde o autor escreve o código. Pode variar desde editores genéricos como \textbf{Vim}, \textbf{Emacs} ou \textbf{VS Code}, até editores especializados como o \textbf{TeXstudio}. O editor não é o compilador; ele apenas facilita a escrita e invoca o motor de compilação.
-    \item \textbf{Motor (Engine)}: O programa binário que efetivamente processa o código. Os principais são o \texttt{pdflatex}, o \texttt{xelatex} e o \texttt{lualatex}.
-    \item \textbf{Classe}: Define a estrutura global do documento (ex: \texttt{article}, \texttt{book}, \texttt{report}, \texttt{beamer}). Ela determina quais comandos de seccionamento estão disponíveis e o layout base.
-    \item \textbf{Pacote}: Extensões que adicionam funcionalidades específicas, como o \texttt{amsmath} para matemática avançada ou o \texttt{graphicx} para inclusão de imagens.
-    \item \textbf{Arquivo .tex}: O documento escrito pelo autor contendo o conteúdo e as instruções de marcação.
+    \item \textbf{Distribuição TeX}: É o repositório completo de ferramentas. As principais são o \textbf{TeX Live} (padrão em Linux e macOS) e o \textbf{MiKTeX} (Windows). Em ambientes online, o \textbf{Overleaf} fornece uma distribuição gerenciada na nuvem.
+    \item \textbf{Editor}: A interface de escrita. Exemplos incluem o \textbf{TeXstudio} (IDE dedicada), o \textbf{VS Code} (com LaTeX Workshop), o \textbf{Vim} (com VimTeX) e o \textbf{Emacs} (com \textbf{AUCTeX}). O editor apenas facilita a escrita e invoca o compilador.
+    \item \textbf{Compilador}: O programa binário que processa o código. No ecossistema TeX, esses programas são frequentemente chamados de \textbf{motores} ou \textit{engines}. Exemplos: \texttt{pdflatex}, \texttt{xelatex}, \texttt{lualatex}.
+    \item \textbf{Classe (\texttt{.cls})}: Define o esqueleto e o layout base (ex: \texttt{book}, \texttt{article}, \texttt{beamer}).
+    \item \textbf{Pacote (\texttt{.sty})}: Extensões de funcionalidade (ex: \texttt{amsmath}, \texttt{graphicx}, \texttt{tikz}).
 \end{itemize}
 
-\section{Fluxo de compilação com pdfLaTeX}
+\section{Fluxo de Compilação e Arquivos Auxiliares}
 
-O fluxo básico de compilação pode ser resumido pela sequência:
-\begin{center}
-    \texttt{arquivo.tex} $\to$ \texttt{pdflatex} $\to$ \texttt{arquivo.pdf}
-\end{center}
+Quando executamos o comando \texttt{pdflatex arquivo.tex}, o compilador realiza uma leitura sequencial. No entanto, elementos que dependem da estrutura global (como sumários e referências) não podem ser resolvidos em uma única passagem.
 
-Entretanto, na prática, o processo envolve a criação de diversos arquivos auxiliares:
+\subsection{Por que múltiplas compilações?}
+Considere uma referência cruzada para um capítulo que está dez páginas à frente. Na primeira passagem, o compilador ainda não sabe em qual página aquele capítulo terminará. Ele então anota o nome do \textit{label} em um arquivo auxiliar e continua. Na segunda passagem, ele lê esse arquivo auxiliar e substitui a marcação pelo número correto.
 
+\subsection{Anatomia dos Arquivos Gerados}
 \begin{itemize}
-    \item \textbf{.aux}: Armazena informações sobre labels, citações e numeração para serem usadas na próxima passagem.
-    \item \textbf{.log}: Registro completo da compilação, incluindo versões dos pacotes carregados, avisos e erros técnicos.
-    \item \textbf{.toc, .lof, .lot}: Listas de conteúdo (sumário), figuras e tabelas, respectivamente.
-    \item \textbf{.bbl}: Arquivo contendo as entradas da bibliografia formatadas, gerado após a execução do BibTeX ou Biber.
-    \item \textbf{.out}: Gerado pelo pacote \texttt{hyperref} para gerenciar os favoritos (bookmarks) do PDF.
+    \item \textbf{\texttt{.aux}}: Armazena labels, citações e contadores. É a ``memória'' entre passagens.
+    \item \textbf{\texttt{.log}}: Registro detalhado de tudo o que ocorreu. É o primeiro lugar a ser consultado em caso de erro.
+    \item \textbf{\texttt{.toc, .lof, .lot}}: Estruturas para sumário, figuras e tabelas.
+    \item \textbf{\texttt{.bbl}}: Gerado pelo BibTeX/Biber para armazenar a bibliografia formatada.
 \end{itemize}
 
-Devido à natureza do \LaTeX, elementos como o sumário ou referências cruzadas dependem de informações que só são conhecidas após o motor processar todo o texto. Por isso, frequentemente são necessárias duas ou três compilações para que todas as referências apareçam corretamente.
+\section{Compiladores: pdflatex, xelatex e lualatex}
 
-\section{Motores de compilação}
+A escolha do compilador determina como o sistema lida com fontes e caracteres modernos.
 
-A escolha do motor de compilação afeta como o documento lida com fontes, caracteres Unicode e extensibilidade:
-
-\begin{itemize}
-    \item \textbf{latex}: O motor original que gera arquivos DVI (\textit{Device Independent}). Atualmente é pouco utilizado para produção direta de PDF.
-    \item \textbf{pdflatex}: Gera PDFs diretamente e utiliza o modelo tradicional de fontes do TeX. É o motor mais estável e rápido para a maioria dos usos acadêmicos.
-    \item \textbf{xelatex}: Possui suporte nativo a Unicode (UTF-8) e permite o uso de fontes instaladas no sistema operacional através do pacote \texttt{fontspec}.
-    \item \textbf{lualatex}: Motor moderno baseado em LuaTeX, com suporte a Unicode, gestão de fontes modernas via \texttt{fontspec} e possibilidade de extensão de funcionalidades através da linguagem Lua.
-\end{itemize}
-
-\section{Por que este curso usa pdfLaTeX}
-
-Neste curso, adotamos o \texttt{pdflatex} como motor padrão por motivos práticos de estabilidade, ampla compatibilidade com pacotes legados e excelente integração com o pacote \texttt{microtype}. Em ambientes acadêmicos e editoriais, a previsibilidade dos resultados e a velocidade de compilação em documentos longos são vantagens significativas. Motores como \texttt{XeLaTeX} e \texttt{LuaLaTeX} são ferramentas poderosas para casos que exigem fontes específicas do sistema ou manipulação programática complexa, mas o \texttt{pdflatex} permanece o padrão de referência para a produção técnica robusta.
+\begin{enumerate}
+    \item \textbf{\texttt{pdflatex}}: O padrão estável. Usa o modelo tradicional de fontes do TeX (\textit{Type 1}). É rápido e amplamente compatível, mas exige pacotes específicos para carregar diferentes fontes.
+    \item \textbf{\texttt{xelatex}}: Suporta nativamente Unicode (UTF-8) e permite o uso de fontes instaladas no sistema operacional (OTF/TTF) via pacote \texttt{fontspec}.
+    \item \textbf{\texttt{lualatex}}: Motor moderno baseado em LuaTeX, com suporte a Unicode, gestão de fontes via \texttt{fontspec} e possibilidade de extensão de funcionalidades através da linguagem Lua.
+\end{enumerate}
 
 \section{Fontes no pdfLaTeX}
 
-O gerenciamento de fontes no \texttt{pdfLaTeX} segue o sistema NFSS (\textit{New Font Selection Scheme}). Para obter resultados de alta qualidade em português, é necessário configurar corretamente a entrada e a saída:
+Este projeto utiliza o \texttt{pdflatex} pela sua robustez em documentos técnicos. Para obter resultados profissionais em português, configuramos o tripé de codificação:
 
 \begin{itemize}
-    \item \textbf{Codificação de entrada}: Define como os caracteres no seu arquivo \texttt{.tex} são interpretados. O padrão atual é o \textbf{UTF-8}. Embora em versões recentes do \LaTeX\ isso seja automático, o comando \verb|\usepackage[utf8]{inputenc}| ainda é amplamente encontrado.
-    \item \textbf{Codificação de fonte (Saída)}: Define como os glifos são mapeados no PDF final. O padrão \textbf{T1} é fortemente recomendado para línguas latinas, habilitado via \verb|\usepackage[T1]{fontenc}|. Sem o T1, caracteres acentuados podem ser compostos por dois glifos separados (o caractere base e o acento), o que prejudica a hifenação e a busca de texto no PDF.
-    \item \textbf{Pacotes de fontes}: Diferente de selecionar um arquivo \texttt{.ttf} diretamente, no \texttt{pdfLaTeX} utilizamos pacotes que fornecem as métricas e glifos preparados. Exemplos incluem \texttt{ebgaramond}, \texttt{lmodern} e \texttt{libertine}.
+    \item \textbf{Entrada (UTF-8)}: Garante que o arquivo \texttt{.tex} salve acentos corretamente. Ativado por \verb|\usepackage[utf8]{inputenc}| (padrão em versões recentes).
+    \item \textbf{Saída (T1)}: A codificação de fonte \texttt{T1} (habilitada por \verb|\usepackage[T1]{fontenc}|) é obrigatória para o português. Ela garante que o PDF contenha glifos acentuados únicos, permitindo a hifenação correta e a busca de texto (ex: buscar ``ação'' e encontrar o resultado, em vez de ``ac'' e ``~ao'' separados).
+    \item \textbf{Pacotes de Fontes}: Como o \texttt{pdflatex} não carrega arquivos \texttt{.ttf} diretamente, usamos pacotes como \texttt{ebgaramond} ou \texttt{newpxtext} que encapsulam as métricas necessárias.
 \end{itemize}
-
-Um exemplo típico de configuração de fonte em um documento profissional seria:
-\begin{lstlisting}[language={[latex]TeX}]
-\usepackage[T1]{fontenc}
-\usepackage{ebgaramond}
-\end{lstlisting}
-
-\section{O que é fontspec e por que ele não entra na configuração real deste projeto}
-
-O pacote \texttt{fontspec} é uma ferramenta exclusiva para os motores \texttt{XeLaTeX} e \texttt{LuaLaTeX}. Ele permite que o autor selecione qualquer fonte instalada no sistema operacional ou arquivos locais de forma direta, similar a processadores de texto comuns. Como este projeto é focado no fluxo de trabalho com \texttt{pdfLaTeX}, o \texttt{fontspec} não é utilizado no preâmbulo real.
-
-\subsection{Exemplo comparativo: fontes locais com XeLaTeX ou LuaLaTeX}
-
-Para fins didáticos, apresentamos abaixo como seria o carregamento de uma fonte externa caso estivéssemos utilizando um motor moderno. Note que este código \textbf{não é compatível} com o \texttt{pdflatex} e serve apenas para ilustração.
-
-\begin{lstlisting}[language={[latex]TeX}, caption={Exemplo de fonte local com XeLaTeX ou LuaLaTeX}]
-\documentclass{article}
-\usepackage{fontspec}
-
-\setmainfont[
-  Path = fontes/,
-  UprightFont = MinhaFonte-Regular.otf,
-  BoldFont = MinhaFonte-Bold.otf,
-  ItalicFont = MinhaFonte-Italic.otf,
-  BoldItalicFont = MinhaFonte-BoldItalic.otf
-]{MinhaFonte}
-
-\begin{document}
-Texto usando uma fonte OpenType local.
-\end{document}
-\end{lstlisting}
-
-Neste exemplo, o parâmetro \texttt{Path = fontes/} indica que os arquivos estão em uma pasta local do projeto. Os campos \texttt{UprightFont}, \texttt{BoldFont}, etc., apontam para os arquivos específicos da família. Esta técnica garante portabilidade ao projeto, pois não depende de a fonte estar instalada globalmente no sistema do colaborador.
 
 \section{Microtipografia com microtype}
 
-O pacote \texttt{microtype} introduz ajustes finos que elevam a qualidade visual do documento. Suas principais funções são:
+O pacote \texttt{microtype} introduz ajustes finos que reduzem a fadiga visual:
 \begin{itemize}
-    \item \textbf{Protrusão}: Pequenos ajustes nas margens para que caracteres como hifens ou pontuação pareçam visualmente alinhados, compensando a ilusão de ótica que cria "buracos" na margem direita.
-    \item \textbf{Expansão}: Ajustes microscópicos na largura dos caracteres para melhorar o espaçamento entre palavras, reduzindo drasticamente a necessidade de hifenação excessiva e evitando manchas brancas (``rios'') no texto.
-\end{itemize}
-O uso do \texttt{microtype} é altamente recomendado para qualquer documento longo ou técnico.
-
-\section{Automação com latexmk e Makefile}
-
-Como vimos, o \LaTeX\ exige múltiplas passagens para resolver dependências. Executar manualmente comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é ineficiente e sujeito a erros.
-
-O \texttt{latexmk} resolve este problema monitorando os arquivos auxiliares e executando automaticamente o ciclo necessário de compilação. Para padronizar o processo entre diferentes colaboradores, utilizamos um \texttt{Makefile}. No curso, ao encontrar um projeto que contenha este arquivo, o comando preferencial para compilação deve ser simplesmente \texttt{make}.
-
-\section{Leitura de erros e avisos}
-
-A depuração é parte integrante da escrita em \LaTeX. O arquivo \texttt{.log} armazena todas as mensagens do sistema.
-
-\subsection{Categorias de Mensagens}
-\begin{itemize}
-    \item \textbf{Errors}: Começam com um ponto de exclamação (\texttt{!}) e interrompem a compilação. Exemplos: \texttt{Undefined control sequence} (comando não reconhecido) ou chaves não fechadas.
-    \item \textbf{Warnings}: Avisos que não impedem a geração do PDF, mas indicam problemas como referências não encontradas (\texttt{Reference ??}) ou arquivos de imagem ausentes.
-    \item \textbf{Box Warnings}: Avisos de \texttt{Overfull \textbackslash{}hbox} indicam que o texto excedeu a margem lateral, criando o que chamamos de ``estouro de margem''.
+    \item \textbf{Protrusão}: Ajusta pontuações nas margens para criar uma borda visual reta.
+    \item \textbf{Expansão}: Ajusta a largura dos caracteres para evitar hifenações excessivas e buracos brancos no texto.
 \end{itemize}
 
-\subsection{Estratégia Prática}
-Ao encontrar erros, a estratégia mais eficiente é:
-\begin{enumerate}
-    \item Ler sempre a \textbf{primeira} mensagem de erro relevante. Erros subsequentes são frequentemente apenas consequências do primeiro.
-    \item Verificar o número da linha indicado.
-    \item Corrigir um erro por vez e recompilar. Não tente corrigir todos os sintomas simultaneamente sem validar a correção base.
-\end{enumerate}
+\section{O que é fontspec (Comparativo)}
 
-\section{Consulta de documentação}
+\textit{Nota: O exemplo abaixo não é compatível com o pdflatex e serve apenas para demonstração didática do uso de fontes do sistema em XeLaTeX ou LuaLaTeX.}
 
-Uma habilidade essencial para o usuário avançado é saber consultar a documentação oficial. O comando \texttt{texdoc} permite abrir os manuais em PDF diretamente do terminal para qualquer pacote instalado.
+\begin{lstlisting}[language={[latex]TeX}, caption={Uso de fontspec}]
+\usepackage{fontspec}
+\setmainfont[
+    Path = fontes/,
+    UprightFont = MinhaFonte-Regular.otf,
+    BoldFont = MinhaFonte-Bold.otf
+]{MinhaFonte}
+\end{lstlisting}
+Neste código, o \texttt{fontspec} permite selecionar arquivos locais (\texttt{Path}) ou do sistema pelo nome real, facilitando a portabilidade em outros motores.
 
-Exemplos de uso:
+\section{Automação e Fluxos de Trabalho}
+
+A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é propensa a erros.
+
+\begin{itemize}
+    \item \textbf{\texttt{latexmk}}: É a ferramenta recomendada. Ela monitora mudanças nos arquivos e executa o ciclo de compilação automaticamente.
+    \item \textbf{Makefile}: Neste projeto, fornecemos um \texttt{Makefile} para que o comando \texttt{make} sirva como uma interface conveniente, abstraindo as chamadas complexas do terminal.
+    \item \textbf{Fluxos Integrados}: Usuários de Overleaf ou IDEs como TeXstudio já possuem esse ciclo configurado por botões visuais, mas entender o que ocorre ``embaixo dos panos'' é vital para resolver falhas de build.
+\end{itemize}
+
+\section{Erros e Diagnóstico: Lendo o Log}
+
+A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros e foque no primeiro}. Frequentemente, um único erro de sintaxe gera uma cascata de falhas subsequentes.
+
+\begin{description}
+    \item[\texttt{Undefined control sequence}] Comando inexistente ou pacote não carregado. Verifique se digitou \verb|\section| em vez de \verb|\secton|.
+    \item[\texttt{File not found}] O compilador não encontrou uma imagem ou arquivo incluído. Verifique caminhos e extensões.
+    \item[\texttt{Missing \$ inserted}] Ocorreu o uso de um símbolo matemático (como \_) fora do modo matemático.
+    \item[\texttt{Overfull \textbackslash hbox}] O texto excedeu a margem lateral. Ajuste a hifenação ou reformule o parágrafo.
+\end{description}
+
+\section{Consulta de Documentação}
+
+A documentação local é a fonte mais confiável. O comando \texttt{texdoc} abre o manual oficial de qualquer pacote instalado:
 \begin{lstlisting}[language=bash]
 texdoc amsmath
 texdoc graphicx
 texdoc beamer
-texdoc latexmk
 \end{lstlisting}
-
-Além disso, o \textbf{CTAN} (\textit{Comprehensive TeX Archive Network}) é o repositório central onde se encontram todos os pacotes e suas respectivas documentações atualizadas.
+Para buscas globais e versões mais recentes, utilize o \textbf{CTAN} (\url{https://ctan.org}).
