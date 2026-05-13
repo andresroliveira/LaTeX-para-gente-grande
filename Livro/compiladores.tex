@@ -20,10 +20,46 @@ Quando executamos o comando \texttt{pdflatex arquivo.tex}, o compilador realiza 
 
 Essa é uma diferença essencial entre compilar um documento pequeno sem referências e compilar um projeto técnico. O arquivo \texttt{.tex} é a entrada principal, mas o estado do documento também passa por arquivos gerados durante a compilação. Em um projeto real, apagar esses arquivos auxiliares ou compilar apenas uma vez pode deixar o PDF em um estado intermediário.
 
+Um documento mínimo sem referências já ilustra a separação entre fonte e saída:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Documento mínimo}]
+\documentclass{article}
+\begin{document}
+Texto do documento.
+\end{document}
+\end{lstlisting}
+
+Ao compilar esse arquivo, o resultado principal é o PDF, mas também aparecem arquivos auxiliares:
+
+\begin{lstlisting}[language=bash, caption={Primeira compilação manual}]
+pdflatex minimo.tex
+ls
+\end{lstlisting}
+
 \subsection{Por que múltiplas compilações?}
 Considere uma referência cruzada para uma seção que aparece mais adiante no documento. Na primeira passagem, o compilador encontra o comando \verb|\label| e registra no arquivo \texttt{.aux} o número da seção e a página correspondente. Se uma chamada a \verb|\ref| apareceu antes dessa informação estar consolidada, o PDF pode mostrar ``??'' ou um valor antigo. Na segunda passagem, o compilador lê o \texttt{.aux} produzido anteriormente e substitui a referência pelo valor correto.
 
 O sumário segue a mesma lógica. Durante uma compilação, os comandos de seção escrevem entradas no arquivo \texttt{.toc}. Em uma passagem posterior, o \LaTeX\ lê esse arquivo para montar o sumário. Por isso, um sumário recém-criado pode aparecer vazio na primeira compilação e correto apenas depois de uma nova passagem.
+
+O exemplo abaixo contém uma referência cruzada simples. Na primeira compilação, a referência pode aparecer como ``??''. Na segunda, o número da seção já estará disponível no arquivo \texttt{.aux}.
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Referência cruzada simples}]
+\documentclass{article}
+\begin{document}
+
+Veja a Secao~\ref{sec:metodo}.
+
+\section{Metodo}\label{sec:metodo}
+Texto da secao.
+
+\end{document}
+\end{lstlisting}
+
+O arquivo \texttt{.aux} produzido conterá uma entrada associando o label ao número da seção. O formato exato pode variar, mas a ideia é esta:
+
+\begin{lstlisting}[caption={Informação registrada no arquivo auxiliar}]
+\newlabel{sec:metodo}{{1}{1}}
+\end{lstlisting}
 
 \subsection{Anatomia dos Arquivos Gerados}
 \begin{itemize}
@@ -55,6 +91,20 @@ Este projeto utiliza o \texttt{pdflatex} por estabilidade e compatibilidade com 
     \item \textbf{Saída (T1)}: a codificação de fonte \texttt{T1} (habilitada por \verb|\usepackage[T1]{fontenc}|) é importante para línguas com acentos. Ela favorece hifenação, cópia de texto e busca no PDF.
     \item \textbf{Pacotes de Fontes}: Como o \texttt{pdflatex} não carrega arquivos \texttt{.ttf} diretamente, usamos pacotes como \texttt{ebgaramond} ou \texttt{newpxtext} que encapsulam as métricas necessárias.
 \end{itemize}
+
+Em um documento pequeno, a configuração típica fica no preâmbulo:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Configuração básica de fonte no pdfLaTeX}]
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % explicito em materiais legados
+\usepackage[brazilian]{babel}
+\usepackage{ebgaramond}
+
+\begin{document}
+Acao, hipotese, funcao, consequencia.
+\end{document}
+\end{lstlisting}
 
 \section{Fontes do sistema e arquivos de fonte}
 
@@ -105,11 +155,44 @@ O efeito costuma ser discreto. O leitor não deve perceber ``um recurso'' espec�
 
 Há limites. \texttt{microtype} não corrige conteúdo mal estruturado, linhas com URLs enormes, tabelas largas ou comandos que impedem que o TeX encontre bons pontos de quebra. Nesses casos, a solução continua sendo revisar a estrutura do trecho, usar comandos apropriados para URLs, ajustar tabelas ou reformular o texto.
 
+O uso usual do pacote é simples:
+
+\begin{lstlisting}[language={[latex]TeX}, caption={Ativando microtipografia}]
+\usepackage[
+    final,
+    protrusion=true,
+    expansion=true
+]{microtype}
+\end{lstlisting}
+
+Em muitos projetos basta carregar \verb|\usepackage{microtype}|. Opções explícitas são úteis quando se deseja documentar a intenção ou controlar o comportamento em uma classe específica.
+
 \section{Automação e Fluxos de Trabalho}
 
 A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é propensa a erros porque o ciclo correto depende do estado dos arquivos auxiliares. Um documento sem bibliografia pode precisar apenas de uma ou duas passagens. Um documento com citações, sumário e referências cruzadas pode exigir BibTeX ou Biber entre passagens de \LaTeX. Se o usuário esquece uma etapa, o PDF pode compilar, mas sair com referências antigas, citações indefinidas ou sumário desatualizado.
 
 \texttt{latexmk} automatiza essa decisão. Ele lê os arquivos gerados, observa mensagens do log e executa novamente os programas necessários até que o PDF esteja consistente ou até encontrar um erro que impeça a continuação. Em vez de memorizar uma sequência fixa, o usuário delega ao \texttt{latexmk} a tarefa de descobrir se precisa chamar \texttt{pdflatex}, BibTeX, Biber ou outra passagem de compilação.
+
+Uma sequência manual típica para documento com BibTeX seria:
+
+\begin{lstlisting}[language=bash, caption={Ciclo manual com bibliografia}]
+pdflatex artigo.tex
+bibtex artigo
+pdflatex artigo.tex
+pdflatex artigo.tex
+\end{lstlisting}
+
+A primeira chamada de \texttt{pdflatex} lê o arquivo \texttt{artigo.tex}, monta a estrutura inicial do documento e grava arquivos auxiliares, como \texttt{artigo.aux}. Nesse arquivo ficam registradas informações que ainda não necessariamente aparecem corretamente no primeiro PDF: chaves de citação, rótulos, entradas de sumário e referências cruzadas.
+
+Em seguida, \texttt{bibtex artigo} não recebe o arquivo \texttt{artigo.tex}, mas sim o nome base do documento. O BibTeX lê \texttt{artigo.aux}, identifica quais obras foram citadas, consulta os arquivos \texttt{.bib} indicados no projeto e gera um arquivo \texttt{artigo.bbl}. Esse arquivo contém a bibliografia já formatada segundo o estilo bibliográfico em uso.
+
+A segunda chamada de \texttt{pdflatex} incorpora o conteúdo de \texttt{artigo.bbl} ao documento e começa a resolver as citações no texto. Ainda assim, algumas referências internas podem mudar de página ou de numeração depois que a bibliografia entra no PDF. Por isso, a terceira chamada de \texttt{pdflatex} serve para estabilizar referências cruzadas, sumário, citações e demais informações que dependem dos arquivos auxiliares.
+
+Com \texttt{latexmk}, essa sequência passa a ser delegada à ferramenta:
+
+\begin{lstlisting}[language=bash, caption={Ciclo automático com latexmk}]
+latexmk -pdf -pdflatex="pdflatex -interaction nonstopmode" artigo.tex
+\end{lstlisting}
 
 \begin{itemize}
     \item \textbf{\texttt{latexmk}}: Monitora dependências e executa o ciclo de compilação necessário para atualizar o PDF.
@@ -119,6 +202,14 @@ A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt
 
 No contexto deste curso, o \texttt{Makefile} não substitui o \texttt{latexmk}; ele padroniza o modo de chamá-lo. Isso evita que cada participante use uma sequência diferente de comandos e facilita a reprodução de problemas durante a aula.
 
+No repositório do curso, o uso esperado é ainda mais curto:
+
+\begin{lstlisting}[language=bash, caption={Interface de compilação do projeto}]
+make
+make -C Livro
+make -C Dia-1
+\end{lstlisting}
+
 \section{Erros e Diagnóstico: Lendo o Log}
 
 A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros e foque no primeiro}. Frequentemente, um único erro de sintaxe gera uma cascata de falhas subsequentes. Depois que o compilador perde o ponto exato da estrutura do documento, ele pode interpretar linhas seguintes de forma incorreta e emitir mensagens que são consequência, não causa.
@@ -126,6 +217,16 @@ A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros 
 No terminal e no arquivo \texttt{.log}, erros aparecem com uma linha iniciada por \texttt{!}. Logo abaixo, o \LaTeX\ costuma mostrar o contexto e, em muitos casos, o número da linha do arquivo \texttt{.tex}. O procedimento básico é: localizar o primeiro \texttt{!}, identificar o arquivo ativo, verificar a linha indicada e ler também algumas linhas antes dela. Muitos erros são causados por um comando aberto anteriormente, uma chave não fechada ou um ambiente iniciado sem o fechamento correspondente.
 
 Também é importante distinguir erro de aviso. Um erro interrompe ou compromete a compilação; um aviso informa uma situação que pode ou não exigir ação. Mensagens como \texttt{Label(s) may have changed} indicam que uma nova compilação pode resolver o problema. Já \texttt{Overfull \textbackslash hbox} aponta uma decisão tipográfica ruim, mas normalmente não impede a geração do PDF.
+
+Um erro de comando inexistente costuma aparecer assim:
+
+\begin{lstlisting}[caption={Exemplo de erro no log}]
+! Undefined control sequence.
+l.12 \seciton
+             {Introducao}
+\end{lstlisting}
+
+O trecho mostra três informações: o tipo do erro, a linha aproximada e o ponto em que o compilador deixou de reconhecer o comando. Nesse caso, a causa provável é um erro de digitação em \verb|\section|.
 
 \begin{description}
     \item[\texttt{Undefined control sequence}] Comando inexistente ou pacote não carregado. Verifique se digitou \verb|\section| em vez de \verb|\secton|.

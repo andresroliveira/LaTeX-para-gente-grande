@@ -115,11 +115,14 @@
 \end{frame}
 
 % BLOCO 3 - FLUXO DE COMPILAÇÃO
-\begin{frame}{Anatomia da Compilação}
+\begin{frame}[fragile]{Anatomia da Compilação}
     \begin{center}
         \texttt{arquivo.tex} $\to$ \textbf{Compilador} $\to$ \texttt{arquivo.pdf}
     \end{center}
-    \vfill
+\begin{lstlisting}
+pdflatex arquivo.tex
+ls arquivo.*
+\end{lstlisting}
     \textbf{Arquivos auxiliares:}
     \begin{itemize}
         \item \textbf{\texttt{.aux}}: Labels, citações e contadores entre passagens.
@@ -129,13 +132,15 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{O Ciclo das Referências}
+\begin{frame}[fragile]{O Ciclo das Referências}
     Por que compilar mais de uma vez?
-    \begin{enumerate}
-        \item \textbf{1ª passagem}: o compilador encontra o label e registra dados no \texttt{.aux}.
-        \item \textbf{2ª passagem}: o compilador lê o \texttt{.aux} e resolve a referência.
-    \end{enumerate}
-    \vfill
+\begin{lstlisting}[language={[latex]TeX}]
+Veja a Secao~\ref{sec:intro}.
+
+\section{Intro}\label{sec:intro}
+\end{lstlisting}
+    \textbf{1ª passagem:} escreve o label no \texttt{.aux}.\\
+    \textbf{2ª passagem:} lê o \texttt{.aux} e resolve o número.
     \begin{alertblock}{Aviso clássico}
         \texttt{LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.}
     \end{alertblock}
@@ -222,8 +227,11 @@ Ola, mundo!
     \textit{Teste no PDF final: copie uma palavra com acento e verifique se o texto extraído preserva os caracteres.}
 \end{frame}
 
-\begin{frame}{Microtipografia}
+\begin{frame}[fragile]{Microtipografia}
     O pacote \texttt{microtype} faz ajustes finos na composição de parágrafos.
+\begin{lstlisting}[language={[latex]TeX}]
+\usepackage{microtype}
+\end{lstlisting}
     \begin{itemize}
         \item \textbf{Protrusão}: pontuação pode avançar levemente na margem.
         \item \textbf{Expansão}: pequenas variações na largura dos caracteres.
@@ -260,23 +268,27 @@ Ola, mundo!
 \end{frame}
 
 % BLOCO 6 - AUTOMAÇÃO
-\begin{frame}{Compilação manual}
+\begin{frame}[fragile]{Compilação manual}
     Para um projeto com bibliografia:
-    \begin{enumerate}
-        \item \texttt{pdflatex doc}
-        \item \texttt{bibtex doc}
-        \item \texttt{pdflatex doc}
-        \item \texttt{pdflatex doc}
-    \end{enumerate}
+\begin{lstlisting}
+pdflatex doc.tex
+bibtex doc
+pdflatex doc.tex
+pdflatex doc.tex
+\end{lstlisting}
     \vfill
     \textbf{Risco:} esquecer uma etapa deixa referências, citações ou sumário desatualizados.
 \end{frame}
 
-\begin{frame}{Ferramentas de Automação}
+\begin{frame}[fragile]{Ferramentas de Automação}
+\begin{lstlisting}
+latexmk -pdf doc.tex
+make
+\end{lstlisting}
     \begin{itemize}
-        \item \textbf{\texttt{latexmk}}: Script inteligente que monitora dependências e re-compila o necessário.
-        \item \textbf{Makefile}: Padroniza o build. No curso, basta digitar \texttt{make}.
-        \item \textbf{Editor/Overleaf}: Já fazem isso via botões, mas escondem o processo.
+        \item \textbf{\texttt{latexmk}}: monitora dependências e recompila o necessário.
+        \item \textbf{Makefile}: padroniza o build do projeto.
+        \item \textbf{Editor/Overleaf}: chamam comandos semelhantes por trás da interface.
     \end{itemize}
 \end{frame}
 
@@ -305,15 +317,16 @@ l.12 \seciton
     \textbf{Leitura:} o comando na linha 12 está escrito de forma incorreta ou depende de pacote não carregado.
 \end{frame}
 
-\begin{frame}{Missing \$ inserted}
+\begin{frame}[fragile]{Missing \$ inserted}
     \textbf{Causa:} Uso de caracteres reservados fora do ambiente matemático.
-    \vfill
-    Exemplos perigosos:
-    \begin{itemize}
-        \item \texttt{\_} (underline);
-        \item \texttt{\textasciicircum} (circunflexo);
-        \item Símbolos matemáticos digitados diretamente no texto.
-    \end{itemize}
+\begin{lstlisting}
+O arquivo dados_2025.csv foi importado.
+\end{lstlisting}
+    \textbf{Problema:} \texttt{\_} tem significado especial.\\
+    \textbf{Correção:}
+\begin{lstlisting}
+O arquivo dados\_2025.csv foi importado.
+\end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Overfull \textbackslash hbox}
@@ -336,6 +349,9 @@ in paragraph at lines 18--20
         \item Procure no terminal o erro \texttt{! Undefined control sequence}.
     \end{enumerate}
 
+\begin{lstlisting}[language={[latex]TeX}]
+\errinho{Texto}
+\end{lstlisting}
     \textbf{Verificação:} Apague o erro, recompile e veja se o arquivo .aux foi atualizado.
 \end{frame}
 
@@ -344,11 +360,15 @@ in paragraph at lines 18--20
 
     \textbf{Tarefa:}
     \begin{enumerate}
-        \item Adicione um label: \texttt{\textbackslash section\{Intro\}\textbackslash label\{sec:intro\}}.
-        \item No fim, cite: \texttt{Veja a sec \textbackslash ref\{sec:intro\}}.
+        \item Adicione uma seção com label.
+        \item Antes ou depois dela, cite a referência.
         \item Compile \textbf{apenas uma vez} e veja o PDF.
     \end{enumerate}
 
+\begin{lstlisting}[language={[latex]TeX}]
+Veja a Secao~\ref{sec:intro}.
+\section{Intro}\label{sec:intro}
+\end{lstlisting}
     \textbf{Observe:} O PDF mostrará ``??''. Compile novamente e verifique a referência resolvida.
 \end{frame}
 
