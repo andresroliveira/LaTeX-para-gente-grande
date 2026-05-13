@@ -2,9 +2,15 @@
 
 ## Descrição
 
-Este que repositório é um guia para o minicurso LaTeX de para Ensino gente de grande a ser ministrado no LEM - Laboratório de Ensido de Matemática do IMECC - Instituto de Matemática, Estatística e Computação Científica da UNICAMP - Universidade Estadual de Campinas.
+Este repositório reúne o material do minicurso **LaTeX para gente grande**, ministrado no LEM -- Laboratório de Ensino de Matemática do IMECC -- Instituto de Matemática, Estatística e Computação Científica da UNICAMP.
 
-Este minicurso tem como objetivo apresentar técnicas não tão básicas de L A TEX para aqueles que já possuem conhecimento básico da ferramenta e desejam aprimorar suas habilidades.
+O minicurso é voltado a usuários que já conhecem a sintaxe básica do LaTeX e precisam organizar documentos técnicos com maior controle sobre compilação, estrutura, fontes, matemática, apresentações e figuras.
+
+O projeto é composto por:
+
+- `Livro/`: apostila de referência, escrita para estudo posterior à aula;
+- `Dia-*`: apresentações Beamer usadas como roteiro de aula;
+- `Referencias/`: PDFs de apoio técnico, quando disponíveis localmente.
 
 ## Referências
 
