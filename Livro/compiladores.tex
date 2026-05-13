@@ -16,18 +16,25 @@ O \LaTeX\ não é um programa único, mas um conjunto de componentes interdepend
 
 \section{Fluxo de Compilação e Arquivos Auxiliares}
 
-Quando executamos o comando \texttt{pdflatex arquivo.tex}, o compilador realiza uma leitura sequencial. No entanto, elementos que dependem da estrutura global (como sumários e referências) não podem ser resolvidos em uma única passagem.
+Quando executamos o comando \texttt{pdflatex arquivo.tex}, o compilador realiza uma leitura sequencial do arquivo de entrada. Ele expande comandos, carrega pacotes, processa ambientes, monta caixas tipográficas e escreve o PDF. No entanto, nem toda informação necessária para o documento final está disponível no momento em que o compilador passa por um trecho do arquivo. Elementos que dependem da estrutura global, como sumário, referências cruzadas, lista de figuras e citações bibliográficas, precisam ser registrados em arquivos auxiliares.
+
+Essa é uma diferença essencial entre compilar um documento pequeno sem referências e compilar um projeto técnico. O arquivo \texttt{.tex} é a entrada principal, mas o estado do documento também passa por arquivos gerados durante a compilação. Em um projeto real, apagar esses arquivos auxiliares ou compilar apenas uma vez pode deixar o PDF em um estado intermediário.
 
 \subsection{Por que múltiplas compilações?}
-Considere uma referência cruzada para um capítulo que está dez páginas à frente. Na primeira passagem, o compilador ainda não sabe em qual página aquele capítulo terminará. Ele então anota o nome do \textit{label} em um arquivo auxiliar e continua. Na segunda passagem, ele lê esse arquivo auxiliar e substitui a marcação pelo número correto.
+Considere uma referência cruzada para uma seção que aparece mais adiante no documento. Na primeira passagem, o compilador encontra o comando \verb|\label| e registra no arquivo \texttt{.aux} o número da seção e a página correspondente. Se uma chamada a \verb|\ref| apareceu antes dessa informação estar consolidada, o PDF pode mostrar ``??'' ou um valor antigo. Na segunda passagem, o compilador lê o \texttt{.aux} produzido anteriormente e substitui a referência pelo valor correto.
+
+O sumário segue a mesma lógica. Durante uma compilação, os comandos de seção escrevem entradas no arquivo \texttt{.toc}. Em uma passagem posterior, o \LaTeX\ lê esse arquivo para montar o sumário. Por isso, um sumário recém-criado pode aparecer vazio na primeira compilação e correto apenas depois de uma nova passagem.
 
 \subsection{Anatomia dos Arquivos Gerados}
 \begin{itemize}
-    \item \textbf{\texttt{.aux}}: Armazena labels, citações e contadores. É a ``memória'' entre passagens.
-    \item \textbf{\texttt{.log}}: Registro detalhado de tudo o que ocorreu. É o primeiro lugar a ser consultado em caso de erro.
-    \item \textbf{\texttt{.toc, .lof, .lot}}: Estruturas para sumário, figuras e tabelas.
-    \item \textbf{\texttt{.bbl}}: Gerado pelo BibTeX/Biber para armazenar a bibliografia formatada.
+    \item \textbf{\texttt{.aux}}: Armazena labels, citações, contadores e outras informações usadas entre passagens.
+    \item \textbf{\texttt{.log}}: Registro detalhado da compilação. Informa pacotes carregados, arquivos encontrados, avisos, erros e estatísticas finais.
+    \item \textbf{\texttt{.toc, .lof, .lot}}: Arquivos lidos para construir sumário, lista de figuras e lista de tabelas.
+    \item \textbf{\texttt{.bbl}}: Arquivo de bibliografia formatada, normalmente produzido por BibTeX ou Biber.
+    \item \textbf{\texttt{.out}}: Arquivo auxiliar usado por pacotes como \texttt{hyperref} para estruturas de navegação do PDF.
 \end{itemize}
+
+Esses arquivos não são texto do documento, mas fazem parte do processo de construção. A automação existe justamente para decidir quando cada um deles precisa ser regenerado.
 
 \section{Compiladores: pdflatex, xelatex e lualatex}
 
@@ -87,15 +94,22 @@ Esses exemplos não devem ser copiados para o preâmbulo real deste livro, pois 
 
 \section{Microtipografia com microtype}
 
-O pacote \texttt{microtype} introduz ajustes finos na composição tipográfica:
+O pacote \texttt{microtype} introduz ajustes finos na composição tipográfica. Ele não muda a estrutura lógica do documento nem substitui uma escolha adequada de fonte, mas melhora a aparência de parágrafos justificados ao permitir pequenas correções que seriam trabalhosas de fazer manualmente.
+
 \begin{itemize}
     \item \textbf{Protrusão}: permite que certos sinais de pontuação avancem levemente na margem, reduzindo irregularidades visuais.
     \item \textbf{Expansão}: aplica pequenas variações na largura dos caracteres para melhorar a justificação do parágrafo.
 \end{itemize}
 
+O efeito costuma ser discreto. O leitor não deve perceber ``um recurso'' específico, mas sim linhas com menos buracos, margens visualmente mais regulares e menos casos em que o algoritmo precisa escolher entre espaçamento ruim e hifenação excessiva. Em textos longos, essa diferença se acumula.
+
+Há limites. \texttt{microtype} não corrige conteúdo mal estruturado, linhas com URLs enormes, tabelas largas ou comandos que impedem que o TeX encontre bons pontos de quebra. Nesses casos, a solução continua sendo revisar a estrutura do trecho, usar comandos apropriados para URLs, ajustar tabelas ou reformular o texto.
+
 \section{Automação e Fluxos de Trabalho}
 
-A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é propensa a erros.
+A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é propensa a erros porque o ciclo correto depende do estado dos arquivos auxiliares. Um documento sem bibliografia pode precisar apenas de uma ou duas passagens. Um documento com citações, sumário e referências cruzadas pode exigir BibTeX ou Biber entre passagens de \LaTeX. Se o usuário esquece uma etapa, o PDF pode compilar, mas sair com referências antigas, citações indefinidas ou sumário desatualizado.
+
+\texttt{latexmk} automatiza essa decisão. Ele lê os arquivos gerados, observa mensagens do log e executa novamente os programas necessários até que o PDF esteja consistente ou até encontrar um erro que impeça a continuação. Em vez de memorizar uma sequência fixa, o usuário delega ao \texttt{latexmk} a tarefa de descobrir se precisa chamar \texttt{pdflatex}, BibTeX, Biber ou outra passagem de compilação.
 
 \begin{itemize}
     \item \textbf{\texttt{latexmk}}: Monitora dependências e executa o ciclo de compilação necessário para atualizar o PDF.
@@ -103,9 +117,15 @@ A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt
     \item \textbf{Fluxos integrados}: Usuários de Overleaf ou IDEs como TeXstudio já possuem esse ciclo configurado por botões visuais, mas conhecer os comandos chamados pelo editor ajuda a resolver falhas de build.
 \end{itemize}
 
+No contexto deste curso, o \texttt{Makefile} não substitui o \texttt{latexmk}; ele padroniza o modo de chamá-lo. Isso evita que cada participante use uma sequência diferente de comandos e facilita a reprodução de problemas durante a aula.
+
 \section{Erros e Diagnóstico: Lendo o Log}
 
-A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros e foque no primeiro}. Frequentemente, um único erro de sintaxe gera uma cascata de falhas subsequentes.
+A primeira regra da depuração em \LaTeX\ é: \textbf{ignore os últimos erros e foque no primeiro}. Frequentemente, um único erro de sintaxe gera uma cascata de falhas subsequentes. Depois que o compilador perde o ponto exato da estrutura do documento, ele pode interpretar linhas seguintes de forma incorreta e emitir mensagens que são consequência, não causa.
+
+No terminal e no arquivo \texttt{.log}, erros aparecem com uma linha iniciada por \texttt{!}. Logo abaixo, o \LaTeX\ costuma mostrar o contexto e, em muitos casos, o número da linha do arquivo \texttt{.tex}. O procedimento básico é: localizar o primeiro \texttt{!}, identificar o arquivo ativo, verificar a linha indicada e ler também algumas linhas antes dela. Muitos erros são causados por um comando aberto anteriormente, uma chave não fechada ou um ambiente iniciado sem o fechamento correspondente.
+
+Também é importante distinguir erro de aviso. Um erro interrompe ou compromete a compilação; um aviso informa uma situação que pode ou não exigir ação. Mensagens como \texttt{Label(s) may have changed} indicam que uma nova compilação pode resolver o problema. Já \texttt{Overfull \textbackslash hbox} aponta uma decisão tipográfica ruim, mas normalmente não impede a geração do PDF.
 
 \begin{description}
     \item[\texttt{Undefined control sequence}] Comando inexistente ou pacote não carregado. Verifique se digitou \verb|\section| em vez de \verb|\secton|.

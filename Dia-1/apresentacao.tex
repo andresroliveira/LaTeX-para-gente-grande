@@ -223,13 +223,12 @@ Ola, mundo!
 \end{frame}
 
 \begin{frame}{Microtipografia}
-    O pacote \texttt{microtype} faz ajustes microscópicos automáticos.
+    O pacote \texttt{microtype} faz ajustes finos na composição de parágrafos.
     \begin{itemize}
-        \item \textbf{Protrusão}: Alinha pontuações na margem direita.
-        \item \textbf{Expansão}: Ajusta largura das letras para evitar hifenação.
+        \item \textbf{Protrusão}: pontuação pode avançar levemente na margem.
+        \item \textbf{Expansão}: pequenas variações na largura dos caracteres.
+        \item \textbf{Limite}: não resolve URLs longas, tabelas largas ou texto mal estruturado.
     \end{itemize}
-    \vfill
-    Esses ajustes atuam na justificação e no acabamento visual dos parágrafos.
 \end{frame}
 
 \begin{frame}[fragile]{Fontes do sistema}
@@ -287,20 +286,23 @@ Ola, mundo!
         Sempre ignore os últimos erros e leia o \textbf{primeiro} erro relevante.
     \end{alertblock}
     \vfill
-    \textbf{Como ler o erro:}
+    \textbf{Sequência prática:}
     \begin{itemize}
-        \item Localize o ponto de exclamação (\texttt{!}).
-        \item Verifique o número da linha.
-        \item Olhe a linha acima da indicação do erro.
+        \item Localize a primeira linha iniciada por \texttt{!}.
+        \item Identifique o arquivo e o número da linha.
+        \item Leia algumas linhas antes do ponto indicado.
+        \item Diferencie erro, aviso e sugestão de recompilação.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Undefined control sequence}
+\begin{frame}[fragile]{Undefined control sequence}
     \textbf{Causa:} O TeX viu um comando que ele não conhece.
-    \begin{itemize}
-        \item Erro de digitação (\texttt{\textbackslash seciton}).
-        \item Esqueceu de carregar um pacote (\texttt{\textbackslash includegraphics} sem \texttt{graphicx}).
-    \end{itemize}
+\begin{lstlisting}
+! Undefined control sequence.
+l.12 \seciton
+             {Introducao}
+\end{lstlisting}
+    \textbf{Leitura:} o comando na linha 12 está escrito de forma incorreta ou depende de pacote não carregado.
 \end{frame}
 
 \begin{frame}{Missing \$ inserted}
@@ -314,12 +316,13 @@ Ola, mundo!
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Overfull \textbackslash hbox}
+\begin{frame}[fragile]{Overfull \textbackslash hbox}
     \textbf{Sintoma:} Texto saindo da margem no PDF.
-    \vfill
-    \textbf{Causa:} O algoritmo do TeX preferiu estourar a margem do que criar espaços muito grandes entre as palavras.
-    \vfill
-    \textbf{Solução:} Verifique a hifenação (\texttt{babel} + \texttt{fontenc} T1) ou reformule a frase.
+\begin{lstlisting}
+Overfull \hbox (12.3pt too wide)
+in paragraph at lines 18--20
+\end{lstlisting}
+    \textbf{Causas comuns:} palavra longa, URL, comando que não quebra linha ou trecho que precisa ser reescrito.
 \end{frame}
 
 % BLOCO 8 - PRÁTICA GUIADA
@@ -349,16 +352,21 @@ Ola, mundo!
     \textbf{Observe:} O PDF mostrará ``??''. Compile novamente e verifique a referência resolvida.
 \end{frame}
 
-\begin{frame}{Laboratório 5: Documentação local}
-    \textbf{Objetivo:} Ganhar independência na resolução de problemas.
+\begin{frame}[fragile]{Laboratório 5: documentação}
+    \textbf{Objetivo:} comparar documentação local, busca online e página do pacote.
 
     \textbf{Tarefa:}
     \begin{enumerate}
-        \item No terminal, digite: \texttt{texdoc geometry}.
-        \item Tente procurar no PDF aberto como mudar as margens.
+        \item Rodar \texttt{texdoc -l geometry}.
+        \item Abrir \url{https://texdoc.org} e buscar \texttt{geometry}.
+        \item Abrir \url{https://ctan.org/pkg/geometry}.
+        \item Comparar onde aparecem manual, versão e exemplos.
     \end{enumerate}
 
-    \textbf{Resultado:} Você deve ter acesso ao manual oficial, que é mais preciso que tutoriais de blog.
+\begin{lstlisting}
+texdoc -l geometry
+\end{lstlisting}
+    \textbf{Observe:} documentação local e online podem corresponder a versões diferentes.
 \end{frame}
 
 \begin{frame}[fragile]{Laboratório 6: fontes fora do pdfLaTeX}
