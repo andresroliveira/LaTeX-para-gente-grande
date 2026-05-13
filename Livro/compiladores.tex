@@ -196,19 +196,9 @@ latexmk -pdf -pdflatex="pdflatex -interaction nonstopmode" artigo.tex
 
 \begin{itemize}
     \item \textbf{\texttt{latexmk}}: Monitora dependências e executa o ciclo de compilação necessário para atualizar o PDF.
-    \item \textbf{Makefile}: Neste projeto, fornecemos um \texttt{Makefile} para que o comando \texttt{make} sirva como uma interface conveniente, abstraindo as chamadas complexas do terminal.
-    \item \textbf{Fluxos integrados}: Usuários de Overleaf ou IDEs como TeXstudio já possuem esse ciclo configurado por botões visuais, mas conhecer os comandos chamados pelo editor ajuda a resolver falhas de build.
+    \item \textbf{Editor local}: Programas como TeXstudio ou extensões de VS Code podem chamar \texttt{pdflatex} ou \texttt{latexmk} por botões e atalhos.
+    \item \textbf{Ambiente online}: Plataformas como Overleaf executam o ciclo de compilação por trás da interface, mas o log continua sendo a fonte principal de diagnóstico.
 \end{itemize}
-
-No contexto deste curso, o \texttt{Makefile} não substitui o \texttt{latexmk}; ele padroniza o modo de chamá-lo. Isso evita que cada participante use uma sequência diferente de comandos e facilita a reprodução de problemas durante a aula.
-
-No repositório do curso, o uso esperado é ainda mais curto:
-
-\begin{lstlisting}[language=bash, caption={Interface de compilação do projeto}]
-make
-make -C Livro
-make -C Dia-1
-\end{lstlisting}
 
 \section{Erros e Diagnóstico: Lendo o Log}
 

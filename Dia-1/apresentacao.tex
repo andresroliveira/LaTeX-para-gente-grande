@@ -42,7 +42,7 @@
         \item Compreender o fluxo de dados entre arquivos auxiliares.
         \item Configurar fontes no \texttt{pdfLaTeX} para o português.
         \item Diagnosticar erros de compilação sistematicamente.
-        \item Conhecer ferramentas de automação (\texttt{latexmk}, \texttt{make}).
+        \item Conhecer o papel da automação no ciclo de compilação.
     \end{itemize}
 \end{frame}
 
@@ -283,12 +283,11 @@ pdflatex doc.tex
 \begin{frame}[fragile]{Ferramentas de Automação}
 \begin{lstlisting}
 latexmk -pdf doc.tex
-make
 \end{lstlisting}
     \begin{itemize}
         \item \textbf{\texttt{latexmk}}: monitora dependências e recompila o necessário.
-        \item \textbf{Makefile}: padroniza o build do projeto.
-        \item \textbf{Editor/Overleaf}: chamam comandos semelhantes por trás da interface.
+        \item \textbf{Editor local}: pode chamar o compilador diretamente ou via ferramenta auxiliar.
+        \item \textbf{Overleaf}: executa um ciclo semelhante por trás da interface.
     \end{itemize}
 \end{frame}
 
@@ -411,7 +410,7 @@ xelatex fontes-sistema.tex
         \item LaTeX é um ecossistema, não um editor.
         \item O compilador conversa com você via arquivo \texttt{.log}.
         \item Codificações corretas reduzem problemas de hifenação, cópia e busca em português.
-        \item \texttt{latexmk} e \texttt{make} padronizam o ciclo de compilação.
+        \item Ferramentas de automação reduzem ciclos manuais repetitivos.
     \end{itemize}
 \end{frame}
 
