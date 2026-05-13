@@ -1,25 +1,25 @@
 \chapter{Introdução}
 
-Este livro constitui o material de referência para o minicurso ``\booktitle'', realizado no Laboratório de Ensino de Matemática (LEM) do Instituto de Matemática, Estatística e Computação Científica (IMECC) da Universidade Estadual de Campinas (UNICAMP). O conteúdo foi desenvolvido para usuários que já possuem familiaridade básica com o sistema \LaTeX\ e desejam aprofundar seus conhecimentos em técnicas avançadas de editoração técnica e científica.
+Este livro constitui o material de referência para o minicurso ``\booktitle'', realizado no Laboratório de Ensino de Matemática (LEM) do Instituto de Matemática, Estatística e Computação Científica (IMECC) da Universidade Estadual de Campinas (UNICAMP). O conteúdo foi desenvolvido para usuários que já possuem familiaridade básica com o sistema \LaTeX\ e precisam produzir documentos técnicos com maior controle sobre estrutura, compilação, fontes, matemática e figuras.
 
-\section{Filosofia do Minicurso}
+\section{Escopo do minicurso}
 
-O título ``\LaTeX\ para gente grande'' reflete uma abordagem focada no domínio técnico e profissional da ferramenta. Para o usuário experiente, o \LaTeX\ deixa de ser apenas um meio para gerar documentos rápidos e torna-se um sistema de engenharia de documentos. Nosso objetivo não é apenas listar comandos, mas compreender a lógica subjacente ao sistema, garantindo reprodutibilidade, organização modular e rigor tipográfico.
+O curso trata o \LaTeX\ como um sistema de preparação de documentos. A ênfase não está na memorização de comandos isolados, mas na compreensão das relações entre arquivo-fonte, compilador, pacotes, arquivos auxiliares e documento final. Essa perspectiva permite diagnosticar erros, organizar projetos maiores e tomar decisões técnicas de forma explícita.
 
-O material privilegia os seguintes pilares:
+O material privilegia os seguintes temas:
 \begin{itemize}
-    \item \textbf{Fluxos de trabalho reprodutíveis}: Uso de automação e ferramentas de build para garantir que o documento compile de forma idêntica em qualquer máquina.
+    \item \textbf{Fluxos de trabalho reprodutíveis}: uso de automação e ferramentas de build para reduzir dependências implícitas no processo de compilação.
     \item \textbf{Organização modular}: Estruturação de projetos grandes em múltiplos arquivos, facilitando a manutenção e a colaboração via sistemas de controle de versão.
-    \item \textbf{Excelência tipográfica}: Gestão fina de fontes e uso de microtipografia para elevar a legibilidade e a estética do texto.
-    \item \textbf{Matemática e Diagramas}: Uso avançado de pacotes da AMS e TikZ para representação técnica precisa.
-    \item \textbf{Comunicação Visual}: Criação de apresentações profissionais com Beamer, integrando o conteúdo do documento com suportes visuais de alta qualidade.
+    \item \textbf{Tipografia}: configuração de codificação, fontes e microtipografia no fluxo com \texttt{pdfLaTeX}.
+    \item \textbf{Matemática e diagramas}: uso de pacotes da AMS, \texttt{mathtools} e TikZ para representação técnica.
+    \item \textbf{Apresentações}: criação de slides em Beamer, com atenção à estrutura, ao ritmo de aula e aos exemplos.
 \end{itemize}
 
 \section{Relação entre Livro e Slides}
 
-Este livro funciona como uma apostila densa e autossuficiente. Cada capítulo desenvolve os temas com explicações detalhadas, justificativas técnicas e referências aos manuais oficiais. Recomendamos sua leitura atenta para a compreensão teórica completa, especialmente para o estudo independente posterior ao curso.
+Este livro funciona como uma apostila densa e autossuficiente. Cada capítulo desenvolve os temas com explicações, justificativas técnicas e, quando necessário, referências aos manuais oficiais. A leitura do livro deve permitir que o aluno retome o conteúdo depois da aula sem depender dos slides.
 
-Os slides, por outro lado, servem como roteiro para as atividades presenciais de uma tarde inteira de aula. Eles contêm resumos visuais, demonstrações práticas e laboratórios guiados. Embora os slides conduzam a dinâmica da aula, é neste texto que o leitor encontrará o suporte conceitual necessário para a resolução de problemas complexos.
+Os slides, por outro lado, servem como roteiro para as atividades presenciais de uma tarde de aula. Eles contêm sínteses, demonstrações práticas e laboratórios guiados. Embora os slides conduzam a dinâmica da aula, é neste texto que o leitor encontrará o suporte conceitual para estudar os problemas com mais detalhe.
 
 \section{O que é \LaTeX?}
 
@@ -29,7 +29,7 @@ Diferente de editores \textit{WYSIWYG} (\textit{What You See Is What You Get}), 
 
 \section{Estrutura de Projeto Profissional}
 
-Um projeto \LaTeX\ maduro envolve mais do que apenas escrever texto. Ele exige organização em:
+Um projeto \LaTeX\ com vários arquivos envolve mais do que escrever texto em um documento único. Ele exige organização em:
 \begin{enumerate}
     \item \textbf{Preâmbulo}: Configurações globais e carregamento de pacotes.
     \item \textbf{Corpo do Texto}: Organizado de forma modular via \verb|\input| ou \verb|\include|.
@@ -37,4 +37,4 @@ Um projeto \LaTeX\ maduro envolve mais do que apenas escrever texto. Ele exige o
     \item \textbf{Automação}: Uso de ferramentas como \texttt{latexmk} e \texttt{Makefiles} para gerenciar o ciclo de compilação.
 \end{enumerate}
 
-Este material foi formatado utilizando um template baseado no Carumã \cite{gomes2021carauma} (MIT License), servindo ele mesmo como exemplo de boas práticas de organização.
+Este material foi formatado utilizando um template baseado no Carumã \cite{gomes2021carauma} (MIT License), adaptado à estrutura deste minicurso.

@@ -1,17 +1,17 @@
 \chapter{Compiladores, Fontes e Automação}
 
-A compreensão profunda do processo de compilação é o que diferencia o usuário casual do \LaTeX\ de um editor técnico profissional. Frequentemente, frustrações comuns --- como referências cruzadas que aparecem como ``??'', sumários vazios ou erros de fontes não reconhecidas --- derivam de uma visão superficial do funcionamento interno do sistema. Entender que o editor não é o compilador e que o \LaTeX\ é um ecossistema modular é o primeiro passo para dominar a ferramenta.
+O processo de compilação explica parte importante do comportamento do \LaTeX. Referências cruzadas que aparecem como ``??'', sumários incompletos e mensagens de fonte não reconhecida geralmente estão ligados à interação entre arquivo-fonte, compilador, pacotes e arquivos auxiliares. Distinguir o editor do compilador e reconhecer o papel de cada componente do ecossistema reduz tentativas aleatórias de correção.
 
 \section{Ecossistema: Distribuição, Editor, Compilador, Classe e Pacote}
 
 O \LaTeX\ não é um programa único, mas um conjunto de componentes interdependentes que interagem para gerar o documento final.
 
 \begin{itemize}
-    \item \textbf{Distribuição TeX}: É o repositório completo de ferramentas. As principais são o \textbf{TeX Live} (padrão em Linux e macOS) e o \textbf{MiKTeX} (Windows). Em ambientes online, o \textbf{Overleaf} fornece uma distribuição gerenciada na nuvem.
+    \item \textbf{Distribuição TeX}: É o conjunto instalado de compiladores, pacotes, classes, fontes e programas auxiliares. As principais são o \textbf{TeX Live} e o \textbf{MiKTeX}. Em ambientes online, o \textbf{Overleaf} fornece uma distribuição gerenciada na nuvem.
     \item \textbf{Editor}: A interface de escrita. Exemplos incluem o \textbf{TeXstudio} (IDE dedicada), o \textbf{VS Code} (com LaTeX Workshop), o \textbf{Vim} (com VimTeX) e o \textbf{Emacs} (com \textbf{AUCTeX}). O editor apenas facilita a escrita e invoca o compilador.
     \item \textbf{Compilador}: O programa binário que processa o código. No ecossistema TeX, esses programas são frequentemente chamados de \textbf{motores} ou \textit{engines}. Exemplos: \texttt{pdflatex}, \texttt{xelatex}, \texttt{lualatex}.
-    \item \textbf{Classe (\texttt{.cls})}: Define o esqueleto e o layout base (ex: \texttt{book}, \texttt{article}, \texttt{beamer}).
-    \item \textbf{Pacote (\texttt{.sty})}: Extensões de funcionalidade (ex: \texttt{amsmath}, \texttt{graphicx}, \texttt{tikz}).
+    \item \textbf{Classe (\texttt{.cls})}: Define a estrutura e o layout base (ex.: \texttt{book}, \texttt{article}, \texttt{beamer}).
+    \item \textbf{Pacote (\texttt{.sty})}: Acrescenta funcionalidades específicas (ex.: \texttt{amsmath}, \texttt{graphicx}, \texttt{tikz}).
 \end{itemize}
 
 \section{Fluxo de Compilação e Arquivos Auxiliares}
@@ -41,20 +41,20 @@ A escolha do compilador determina como o sistema lida com fontes e caracteres mo
 
 \section{Fontes no pdfLaTeX}
 
-Este projeto utiliza o \texttt{pdflatex} pela sua robustez em documentos técnicos. Para obter resultados profissionais em português, configuramos o tripé de codificação:
+Este projeto utiliza o \texttt{pdflatex} por estabilidade e compatibilidade com ambientes comuns de ensino. Para produzir documentos em português nesse fluxo, configuramos três elementos:
 
 \begin{itemize}
-    \item \textbf{Entrada (UTF-8)}: Garante que o arquivo \texttt{.tex} salve acentos corretamente. Ativado por \verb|\usepackage[utf8]{inputenc}| (padrão em versões recentes).
-    \item \textbf{Saída (T1)}: A codificação de fonte \texttt{T1} (habilitada por \verb|\usepackage[T1]{fontenc}|) é obrigatória para o português. Ela garante que o PDF contenha glifos acentuados únicos, permitindo a hifenação correta e a busca de texto (ex: buscar ``ação'' e encontrar o resultado, em vez de ``ac'' e ``~ao'' separados).
+    \item \textbf{Entrada (UTF-8)}: indica como o arquivo \texttt{.tex} codifica caracteres acentuados. Em versões recentes do \LaTeX, UTF-8 é o padrão; em materiais legados, ainda é comum encontrar \verb|\usepackage[utf8]{inputenc}|.
+    \item \textbf{Saída (T1)}: a codificação de fonte \texttt{T1} (habilitada por \verb|\usepackage[T1]{fontenc}|) é importante para línguas com acentos. Ela favorece hifenação, cópia de texto e busca no PDF.
     \item \textbf{Pacotes de Fontes}: Como o \texttt{pdflatex} não carrega arquivos \texttt{.ttf} diretamente, usamos pacotes como \texttt{ebgaramond} ou \texttt{newpxtext} que encapsulam as métricas necessárias.
 \end{itemize}
 
 \section{Microtipografia com microtype}
 
-O pacote \texttt{microtype} introduz ajustes finos que reduzem a fadiga visual:
+O pacote \texttt{microtype} introduz ajustes finos na composição tipográfica:
 \begin{itemize}
-    \item \textbf{Protrusão}: Ajusta pontuações nas margens para criar uma borda visual reta.
-    \item \textbf{Expansão}: Ajusta a largura dos caracteres para evitar hifenações excessivas e buracos brancos no texto.
+    \item \textbf{Protrusão}: permite que certos sinais de pontuação avancem levemente na margem, reduzindo irregularidades visuais.
+    \item \textbf{Expansão}: aplica pequenas variações na largura dos caracteres para melhorar a justificação do parágrafo.
 \end{itemize}
 
 \section{O que é fontspec (Comparativo)}
@@ -69,16 +69,16 @@ O pacote \texttt{microtype} introduz ajustes finos que reduzem a fadiga visual:
     BoldFont = MinhaFonte-Bold.otf
 ]{MinhaFonte}
 \end{lstlisting}
-Neste código, o \texttt{fontspec} permite selecionar arquivos locais (\texttt{Path}) ou do sistema pelo nome real, facilitando a portabilidade em outros motores.
+Neste código, o \texttt{fontspec} permite selecionar arquivos locais (\texttt{Path}) ou fontes instaladas no sistema pelo nome real. Esse recurso pertence ao fluxo com XeLaTeX ou LuaLaTeX, não ao fluxo adotado neste projeto.
 
 \section{Automação e Fluxos de Trabalho}
 
 A execução manual de comandos como \texttt{pdflatex}, \texttt{bibtex}, \texttt{pdflatex}, \texttt{pdflatex} é propensa a erros.
 
 \begin{itemize}
-    \item \textbf{\texttt{latexmk}}: É a ferramenta recomendada. Ela monitora mudanças nos arquivos e executa o ciclo de compilação automaticamente.
+    \item \textbf{\texttt{latexmk}}: Monitora dependências e executa o ciclo de compilação necessário para atualizar o PDF.
     \item \textbf{Makefile}: Neste projeto, fornecemos um \texttt{Makefile} para que o comando \texttt{make} sirva como uma interface conveniente, abstraindo as chamadas complexas do terminal.
-    \item \textbf{Fluxos Integrados}: Usuários de Overleaf ou IDEs como TeXstudio já possuem esse ciclo configurado por botões visuais, mas entender o que ocorre ``embaixo dos panos'' é vital para resolver falhas de build.
+    \item \textbf{Fluxos integrados}: Usuários de Overleaf ou IDEs como TeXstudio já possuem esse ciclo configurado por botões visuais, mas conhecer os comandos chamados pelo editor ajuda a resolver falhas de build.
 \end{itemize}
 
 \section{Erros e Diagnóstico: Lendo o Log}

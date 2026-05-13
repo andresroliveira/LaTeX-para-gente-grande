@@ -38,7 +38,7 @@
 
 \begin{frame}{Objetivos da Tarde}
     \begin{itemize}
-        \item Dominar a terminologia profissional do ecossistema TeX.
+        \item Identificar os componentes do ecossistema TeX.
         \item Compreender o fluxo de dados entre arquivos auxiliares.
         \item Configurar fontes no \texttt{pdfLaTeX} para o português.
         \item Diagnosticar erros de compilação sistematicamente.
@@ -49,7 +49,7 @@
 \begin{frame}{O que você saberá ao final do dia}
     \begin{itemize}
         \item Por que o sumário às vezes some e como recuperá-lo.
-        \item Como ler o log sem medo de mensagens criptografadas.
+        \item Como localizar informações relevantes no arquivo de log.
         \item A diferença técnica entre codificações T1 e OT1.
         \item Como consultar manuais oficiais via terminal.
     \end{itemize}
@@ -58,23 +58,23 @@
 % BLOCO 2 - ECOSSISTEMA
 \begin{frame}{LaTeX não é um programa único}
     \begin{block}{O Ecossistema TeX}
-        LaTeX é um conjunto de macros rodando sobre um motor tipográfico, integrado em um condomínio de ferramentas.
+        LaTeX é um conjunto de macros executado por um compilador TeX e integrado a outras ferramentas.
     \end{block}
     \vfill
     \textbf{Principais componentes:}
     \begin{enumerate}
         \item Distribuição (O repositório).
-        \item Compilador/Motor (O cérebro).
+        \item Compilador ou motor de compilação.
         \item Editor (A interface).
-        \item Classe e Pacote (As regras e funções).
+        \item Classe e pacote.
     \end{enumerate}
 \end{frame}
 
 \begin{frame}{Distribuições: O Repositório de Ferramentas}
     \begin{itemize}
-        \item \textbf{TeX Live}: O padrão ouro multiplataforma (Linux, Mac, Windows).
+        \item \textbf{TeX Live}: distribuição multiplataforma (Linux, macOS, Windows).
         \item \textbf{MiKTeX}: Popular no Windows, instala pacotes sob demanda.
-        \item \textbf{MacTeX}: A versão otimizada do TeX Live para macOS.
+        \item \textbf{MacTeX}: empacotamento do TeX Live para macOS.
     \end{itemize}
     \vfill
     \begin{block}{Observação técnica}
@@ -82,18 +82,18 @@
     \end{block}
 \end{frame}
 
-\begin{frame}{Editores: Onde a mágica (não) acontece}
+\begin{frame}{Editores e compiladores}
     O editor \textbf{não é} o compilador. Ele apenas chama o programa que faz o trabalho.
     \begin{itemize}
         \item \textbf{TeXstudio}: IDE completa com visualizadores de log e PDF integrados.
-        \item \textbf{VS Code + LaTeX Workshop}: Fluxo moderno e altamente customizável.
-        \item \textbf{Overleaf}: Editor na nuvem (ideal para colaboração em tempo real).
-        \item \textbf{Emacs + AUCTeX}: O auge da automação para usuários avançados.
+        \item \textbf{VS Code + LaTeX Workshop}: editor extensível com integração ao compilador.
+        \item \textbf{Overleaf}: editor na nuvem com compilação integrada.
+        \item \textbf{Emacs + AUCTeX}: ambiente local com automação e comandos especializados.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Compilador (Motor): Quem processa}
-    No contexto técnico, o compilador é frequentemente chamado de \textbf{Engine} ou motor.
+\begin{frame}{Compilador: quem processa}
+    No ecossistema TeX, programas como \texttt{pdflatex}, \texttt{xelatex} e \texttt{lualatex} também são chamados de motores ou \textit{engines}.
     \begin{itemize}
         \item \textbf{\texttt{pdflatex}}: Estável, rápido, foco em fontes tradicionais.
         \item \textbf{\texttt{xelatex}}: Unicode nativo, usa fontes do sistema (.ttf, .otf).
@@ -107,7 +107,7 @@
               \begin{itemize}
                   \item \texttt{article}, \texttt{book}, \texttt{beamer}, \texttt{abntex2}.
               \end{itemize}
-        \item \textbf{Pacote (\texttt{.sty})}: Os superpoderes.
+        \item \textbf{Pacote (\texttt{.sty})}: Funcionalidades específicas.
               \begin{itemize}
                   \item \texttt{amsmath} (matemática), \texttt{graphicx} (imagens), \texttt{tikz} (desenho).
               \end{itemize}
@@ -120,11 +120,11 @@
         \texttt{arquivo.tex} $\to$ \textbf{Compilador} $\to$ \texttt{arquivo.pdf}
     \end{center}
     \vfill
-    \textbf{Arquivos Auxiliares (A Memória):}
+    \textbf{Arquivos auxiliares:}
     \begin{itemize}
-        \item \textbf{\texttt{.aux}}: Onde o TeX anota labels e referências.
-        \item \textbf{\texttt{.log}}: Onde o TeX anota tudo o que aconteceu (erros e avisos).
-        \item \textbf{\texttt{.toc}}: Onde reside a estrutura do sumário.
+        \item \textbf{\texttt{.aux}}: Labels, citações e contadores entre passagens.
+        \item \textbf{\texttt{.log}}: Registro de erros, avisos, pacotes e arquivos carregados.
+        \item \textbf{\texttt{.toc}}: Estrutura usada para gerar o sumário.
         \item \textbf{\texttt{.bbl}}: A bibliografia formatada pelo BibTeX.
     \end{itemize}
 \end{frame}
@@ -132,8 +132,8 @@
 \begin{frame}{O Ciclo das Referências}
     Por que compilar mais de uma vez?
     \begin{enumerate}
-        \item \textbf{1ª Passagem}: ``Vi um label chamado 'eq1' na página 5. Vou anotar no .aux''.
-        \item \textbf{2ª Passagem}: ``Opa, alguém citou o 'eq1'. Vou ler no .aux onde ele estava''.
+        \item \textbf{1ª passagem}: o compilador encontra o label e registra dados no \texttt{.aux}.
+        \item \textbf{2ª passagem}: o compilador lê o \texttt{.aux} e resolve a referência.
     \end{enumerate}
     \vfill
     \begin{alertblock}{Aviso clássico}
@@ -142,8 +142,8 @@
 \end{frame}
 
 % BLOCO 4 - LABORATÓRIO 1
-\begin{frame}[fragile]{Laboratório 1: O Vazio e o Erro}
-    \textbf{Objetivo:} Perder o medo das mensagens de erro iniciais.
+\begin{frame}[fragile]{Laboratório 1: arquivo vazio}
+    \textbf{Objetivo:} Observar a resposta do compilador a um arquivo sem estrutura LaTeX.
 
     \textbf{Tarefa:}
     \begin{enumerate}
@@ -175,19 +175,19 @@ Ola, mundo!
 \end{frame}
 
 % BLOCO 5 - MOTORES E FONTES
-\begin{frame}{pdflatex vs Motores Modernos}
+\begin{frame}{pdflatex, xelatex e lualatex}
     \begin{itemize}
-        \item \textbf{pdflatex}: Padrão de estabilidade. Usa o modelo tradicional do TeX.
+        \item \textbf{pdflatex}: usa o modelo tradicional de fontes do TeX.
         \item \textbf{fontspec}: Pacote para Xe/LuaTeX que carrega fontes do sistema.
     \end{itemize}
     \vfill
-    \begin{block}{Nossa escolha: pdflatex}
-        Garante reprodutibilidade sem depender de fontes instaladas no sistema operacional do colega.
+    \begin{block}{Escolha do curso: pdflatex}
+        Reduz dependências de fontes instaladas no sistema operacional de cada participante.
     \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Configuração de Fontes em Português}
-    No \texttt{pdfLaTeX}, o segredo está no tripé:
+    No \texttt{pdfLaTeX}, a configuração básica envolve três elementos:
     \begin{itemize}
         \item \textbf{UTF-8}: Codificação de entrada.
         \item \textbf{T1}: Codificação de saída (glifos acentuados únicos).
@@ -201,23 +201,23 @@ Ola, mundo!
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Por que o T1 é inegociável?}
+\begin{frame}{Por que usar T1?}
     \begin{itemize}
         \item \textbf{Sem T1}: ``ç'' vira ``c'' + ``acento'', quebra a hifenação e a busca no PDF.
         \item \textbf{Com T1}: O PDF contém o glifo real de ``ç''.
     \end{itemize}
     \vfill
-    \textit{Teste no PDF final: tente copiar uma palavra com acento. Se sair com lixo, o T1 está faltando.}
+    \textit{Teste no PDF final: copie uma palavra com acento e verifique se o texto extraído preserva os caracteres.}
 \end{frame}
 
-\begin{frame}{Microtipografia: O Refinamento Final}
+\begin{frame}{Microtipografia}
     O pacote \texttt{microtype} faz ajustes microscópicos automáticos.
     \begin{itemize}
         \item \textbf{Protrusão}: Alinha pontuações na margem direita.
         \item \textbf{Expansão}: Ajusta largura das letras para evitar hifenação.
     \end{itemize}
     \vfill
-    Torna blocos de texto longo muito mais agradáveis de ler.
+    Esses ajustes atuam na justificação e no acabamento visual dos parágrafos.
 \end{frame}
 
 \begin{frame}[fragile]{fontspec (Apenas para conhecimento)}
@@ -233,7 +233,7 @@ Ola, mundo!
 \end{frame}
 
 % BLOCO 6 - AUTOMAÇÃO
-\begin{frame}{O cansaço da compilação manual}
+\begin{frame}{Compilação manual}
     Para um projeto com bibliografia:
     \begin{enumerate}
         \item \texttt{pdflatex doc}
@@ -242,7 +242,7 @@ Ola, mundo!
         \item \texttt{pdflatex doc}
     \end{enumerate}
     \vfill
-    \textbf{Fadiga técnica}: Esquecer um passo causa referências quebradas.
+    \textbf{Risco:} esquecer uma etapa deixa referências, citações ou sumário desatualizados.
 \end{frame}
 
 \begin{frame}{Ferramentas de Automação}
@@ -254,8 +254,8 @@ Ola, mundo!
 \end{frame}
 
 % BLOCO 7 - ERROS E DIAGNÓSTICO
-\begin{frame}{Estratégia de Diagnóstico}
-    \begin{alertblock}{Regra de Ouro}
+\begin{frame}{Estratégia de diagnóstico}
+    \begin{alertblock}{Ponto de partida}
         Sempre ignore os últimos erros e leia o \textbf{primeiro} erro relevante.
     \end{alertblock}
     \vfill
@@ -286,7 +286,7 @@ Ola, mundo!
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Overfull \textbackslash hbox (A caixa vazada)}
+\begin{frame}{Overfull \textbackslash hbox}
     \textbf{Sintoma:} Texto saindo da margem no PDF.
     \vfill
     \textbf{Causa:} O algoritmo do TeX preferiu estourar a margem do que criar espaços muito grandes entre as palavras.
@@ -295,7 +295,7 @@ Ola, mundo!
 \end{frame}
 
 % BLOCO 8 - PRÁTICA GUIADA
-\begin{frame}[fragile]{Laboratório 3: Provocando o Caos}
+\begin{frame}[fragile]{Laboratório 3: comando inexistente}
     \textbf{Objetivo:} Localizar e corrigir um erro de comando.
 
     \textbf{Tarefa:}
@@ -318,7 +318,7 @@ Ola, mundo!
         \item Compile \textbf{apenas uma vez} e veja o PDF.
     \end{enumerate}
 
-    \textbf{Observe:} O PDF mostrará ``??''. Compile novamente e veja a mágica.
+    \textbf{Observe:} O PDF mostrará ``??''. Compile novamente e verifique a referência resolvida.
 \end{frame}
 
 \begin{frame}{Laboratório 5: Documentação local}
@@ -338,16 +338,16 @@ Ola, mundo!
     \begin{itemize}
         \item LaTeX é um ecossistema, não um editor.
         \item O compilador conversa com você via arquivo \texttt{.log}.
-        \item Codificações corretas evitam 90\% dos problemas de português.
-        \item \texttt{latexmk} e \texttt{make} são seus aliados.
+        \item Codificações corretas reduzem problemas de hifenação, cópia e busca em português.
+        \item \texttt{latexmk} e \texttt{make} padronizam o ciclo de compilação.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Próximo Dia}
     \begin{itemize}
         \item Estruturação de documentos técnicos grandes.
-        \item Matemática avançada com \texttt{amsmath} e \texttt{mathtools}.
-        \item Cruzamento de dados e bibliografia profissional.
+        \item Escrita matemática com \texttt{amsmath} e \texttt{mathtools}.
+        \item Referências cruzadas e bibliografia.
     \end{itemize}
 \end{frame}
 
